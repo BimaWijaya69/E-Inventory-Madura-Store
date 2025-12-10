@@ -25,6 +25,7 @@ return new class extends Migration
             $table->foreignId('dibuat_oleh')
                 ->constrained('users')
                 ->restrictOnDelete();
+            $table->enum('delet_at', ['0', '1'])->default('0');
             $table->timestamps();
         });
     }

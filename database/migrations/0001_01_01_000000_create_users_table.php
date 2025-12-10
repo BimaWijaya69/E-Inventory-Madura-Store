@@ -19,6 +19,7 @@ return new class extends Migration
             $table->string('password');
             $table->enum('role', ['1', '2', '3']);
             $table->boolean('is_active')->default(true);
+            $table->enum('delet_at', ['0', '1'])->default('0');
             $table->rememberToken();
             $table->timestamps();
         });
