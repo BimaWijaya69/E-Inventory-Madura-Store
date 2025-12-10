@@ -20,7 +20,10 @@ Route::middleware(['auth', PreventBackHistory::class])->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
     Route::get('/materials', [MaterialController::class, 'index'])->name('materials');
     Route::get('/manajmen-users', [UserController::class, 'index'])->name('users');
-    Route::get('/material-masuk', [TransaksiMaterialController::class, 'materialMasukView'])->name('material-masuks');
-    Route::get('/material-keluar', [TransaksiMaterialController::class, 'materialKeluarView'])->name('material-keluars');
+    //Transaksi
+    Route::get('/material-masuk', [TransaksiMaterialController::class, 'penerimaanView'])->name('material-masuks');
+    Route::get('/material-masuk/create', [TransaksiMaterialController::class, 'createPenerimaan'])->name('material-masuks.create');
+    Route::get('/material-keluar', [TransaksiMaterialController::class, 'pengeluaranView'])->name('material-keluars');
+    Route::get('/material-keluar/create', [TransaksiMaterialController::class, 'createPengeluaran'])->name('material-keluars.create');
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 });

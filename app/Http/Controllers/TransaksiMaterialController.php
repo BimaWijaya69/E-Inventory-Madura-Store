@@ -15,7 +15,7 @@ class TransaksiMaterialController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function materialMasukView()
+    public function penerimaanView()
     {
         $data = Auth::user();
         $breadcrumb = (object) [
@@ -24,7 +24,7 @@ class TransaksiMaterialController extends Controller
         return view('pages.transaksi.material-masuk',  ['data' => $data, 'breadcrumb' => $breadcrumb]);
     }
 
-    public function materialKeluarView()
+    public function pengeluaranView()
     {
         $data = Auth::user();
         $breadcrumb = (object) [
@@ -36,9 +36,22 @@ class TransaksiMaterialController extends Controller
     /**
      * Show the form for creating a new resource.
      */
-    public function create()
+    public function createPenerimaan()
     {
-        //
+        $data = Auth::user();
+        $breadcrumb = (object) [
+            'list' => ['Material Masuk', 'Tambah Data']
+        ];
+        return view('pages.transaksi.form-penerimaan',  ['data' => $data, 'breadcrumb' => $breadcrumb]);
+    }
+
+    public function createPengeluaran()
+    {
+        $data = Auth::user();
+        $breadcrumb = (object) [
+            'list' => ['Material Keluar', 'Tambah Data']
+        ];
+        return view('pages.transaksi.form-pengeluaran',  ['data' => $data, 'breadcrumb' => $breadcrumb]);
     }
 
     /**
