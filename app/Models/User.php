@@ -4,6 +4,7 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
@@ -21,6 +22,8 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'role',
+        'is_active',
     ];
 
     /**
@@ -44,5 +47,14 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    public function traksaksi_material(): HasMany
+    {
+        return $this->hasMany(TransaksiMaterial::class, 'dibuat_oleh');
+    }
+    public function verifikasi_traksaksi(): HasMany
+    {
+        return $this->hasMany(VerifikasiTraksaksi::class, 'diverifikasi_oleh');
     }
 }
