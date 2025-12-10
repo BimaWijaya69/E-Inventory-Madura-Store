@@ -22,7 +22,8 @@ class TransaksiMaterial extends Model
         'foto_bukti',
         'foto_sr_sebelum',
         'foto_sr_sesudah',
-        'dibuat_oleh'
+        'dibuat_oleh',
+        'delet_at'
     ];
 
     public function dibuat_oleh(): BelongsTo

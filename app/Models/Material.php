@@ -17,7 +17,8 @@ class Material extends Model
         'satuan',
         'stok_awal',
         'min_stok',
-        'stok'
+        'stok',
+        'delet_at'
     ];
 
     public function detail_transaksi_material(): HasMany

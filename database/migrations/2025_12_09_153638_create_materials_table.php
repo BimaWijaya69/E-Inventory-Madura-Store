@@ -14,11 +14,12 @@ return new class extends Migration
         Schema::create('materials', function (Blueprint $table) {
             $table->id();
             $table->string('kode_material')->unique();
-            $table->string('nama_material');
+            $table->string('nama_material')->unique();
             $table->string('satuan')->nullable();
             $table->integer('stok_awal')->default(0);
             $table->integer('min_stok')->default(0);
             $table->integer('stok')->default(0);
+            $table->enum('delet_at', ['0', '1'])->default('0');
             $table->timestamps();
         });
     }

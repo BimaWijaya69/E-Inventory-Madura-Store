@@ -42,7 +42,7 @@
                     <a href="{{ route('material-masuks') }}"
                         class="{{ request()->routeIs('material-masuks') ? 'active' : '' }}">
                         <i class="fa-solid fa-truck nav-icon" style="font-size: 14px;"></i>
-                        <span>Material Masuk</span>
+                        <span>Penerimaan Material</span>
                     </a>
                 </li>
 
@@ -50,7 +50,7 @@
                     <a href="{{ route('material-keluars') }}"
                         class="{{ request()->routeIs('material-keluars') ? 'active' : '' }}">
                         <i class="fa-solid fa-truck-ramp-box nav-icon"style="font-size: 14px;"></i>
-                        <span>Material Keluar</span>
+                        <span>Pengeluaran Material</span>
                     </a>
                 </li>
 

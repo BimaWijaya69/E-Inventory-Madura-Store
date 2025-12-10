@@ -2,7 +2,7 @@
 
 @section('content')
     @include('layouts.breadcrumb')
-    <section class="section masuk">
+    <section class="section keluar">
         <div class="row">
 
 
