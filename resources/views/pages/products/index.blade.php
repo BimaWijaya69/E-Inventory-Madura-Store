@@ -31,8 +31,8 @@
                         <thead class="table-light text-center">
                             <tr>
                                 <th>No</th>
-                                <th>Kode Barang</th>
-                                <th>Nama Barang</th>
+                                <th>Kode Material</th>
+                                <th>Nama Manterial</th>
                                 <th>Foto Barang</th>
                                 <th>Harga</th>
                                 <th>Stok</th>
