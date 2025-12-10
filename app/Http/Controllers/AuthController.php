@@ -32,20 +32,16 @@ class AuthController extends Controller
 
             return redirect()->intended('/dashboard');
         }
-
-        return back()->withErrors([
-            'email' => 'The provided credentials do not match our records.',
-        ])->onlyInput('email');
+        return back()
+            ->with('error', 'Email or Password Incorrect!')
+            ->withInput();
     }
 
     public function logout(Request $request)
     {
-        Auth::logout();  // Logout pengguna
-
-        $request->session()->invalidate();  // Menghapus session
-
-        $request->session()->regenerateToken();  // Menghasilkan ulang token CSRF
-
-        return redirect('/login');  // Redirect ke halaman login setelah logout
+        Auth::logout();
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+        return redirect('/');
     }
 }

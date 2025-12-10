@@ -1,0 +1,36 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration
+{
+    /**
+     * Run the migrations.
+     */
+    public function up(): void
+    {
+        Schema::create('verifikasi_traksaksis', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('transaksi_id')->constrained('transaksi_materials')->cascadeOnDelete()->cascadeOnUpdate();
+            $table->enum('status', ['0', '1', '2'])
+                ->default('0')->comment(
+                    '0=menunggu',
+                    '1=disetujui',
+                    '2=dikembalikan'
+                );
+            $table->foreignId('diverifikasi_oleh')->nullable()->constrained('users')->restrictOnDelete();
+            $table->text('alasan_pengembalian')->nullable();
+            $table->timestamps();
+        });
+    }
+
+    /**
+     * Reverse the migrations.
+     */
+    public function down(): void
+    {
+        Schema::dropIfExists('verifikasi_traksaksis');
+    }
+};

@@ -1,120 +1,135 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 
 <head>
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="">
-    <meta name="author" content="Mark Otto, Jacob Thornton, and Bootstrap contributors">
-    <meta name="generator" content="Hugo 0.84.0">
-    <title>Gudang Madura</title>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+    <title>Master Admin</title>
+    <meta content="" name="description">
+    <meta content="" name="keywords">
+    <!-- Favicons -->
+    <link href="{{ asset('assets/img/logo.png') }}" rel="icon">
+    <link href="{{ asset('NiceAdmin/assets/img/apple-touch-icon.png') }}" rel="apple-touch-icon">
 
-    <link rel="canonical" href="https://getbootstrap.com/docs/5.0/examples/sign-in/">
+    <!-- Google Fonts -->
+    <link href="https://fonts.gstatic.com" rel="preconnect">
+    <link
+        href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Nunito:300,300i,400,400i,600,600i,700,700i|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i"
+        rel="stylesheet">
 
+    <!-- Vendor CSS Files -->
+    <link href="{{ asset('NiceAdmin/assets/vendor/bootstrap/css/bootstrap.min.css') }}" rel="stylesheet">
+    <link href="{{ asset('NiceAdmin/assets/vendor/bootstrap-icons/bootstrap-icons.css') }}" rel="stylesheet">
+    <link href="{{ asset('NiceAdmin/assets/vendor/boxicons/css/boxicons.min.css') }}" rel="stylesheet">
+    <link href="{{ asset('NiceAdmin/assets/vendor/quill/quill.snow.css') }}" rel="stylesheet">
+    <link href="{{ asset('NiceAdmin/assets/vendor/quill/quill.bubble.css') }}" rel="stylesheet">
+    <link href="{{ asset('NiceAdmin/assets/vendor/remixicon/remixicon.css') }}" rel="stylesheet">
+    <link href="{{ asset('NiceAdmin/assets/vendor/simple-datatables/style.css') }}" rel="stylesheet">
 
+    <!-- Template Main CSS File -->
+    <link href="{{ asset('NiceAdmin/assets/css/style.css') }}" rel="stylesheet">
 
-    <!-- Bootstrap core CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
-        integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
-
-    <style>
-        .bd-placeholder-img {
-            font-size: 1.125rem;
-            text-anchor: middle;
-            -webkit-user-select: none;
-            -moz-user-select: none;
-            user-select: none;
-        }
-
-        @media (min-width: 768px) {
-            .bd-placeholder-img-lg {
-                font-size: 3.5rem;
-            }
-        }
-
-        /* Gaya untuk card */
-        .card {
-            background-color: #ffffff;
-            /* Warna latar belakang card */
-            border-radius: 15px;
-            /* Sudut melengkung */
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            /* Bayangan */
-            padding: 20px;
-            /* Jarak konten ke tepi card */
-            max-width: 400px;
-            /* Lebar maksimum card */
-            margin: 50px auto;
-            /* Card terpusat dengan margin atas */
-        }
-
-        /* Gaya untuk tombol */
-        .btn-tambah {
-            background-color: #007bff;
-            /* Warna biru untuk tombol */
-            color: white;
-            /* Warna teks pada tombol */
-            border-radius: 10px;
-            /* Sudut melengkung untuk tombol */
-            padding: 10px 15px;
-            font-size: 16px;
-        }
-
-        .btn-tambah:hover {
-            background-color: #0056b3;
-            /* Warna lebih gelap saat hover */
-        }
-
-        /* Gaya untuk input form */
-        .form-floating input {
-            border-radius: 10px;
-            /* Sudut melengkung untuk input */
-            margin-bottom: 15px;
-            /* Jarak antar input */
-        }
-
-        /* Gaya untuk label */
-        .form-floating label {
-            padding-left: 10px;
-        }
-    </style>
-
-
-    <!-- Custom styles for this template -->
-    <link href="{{ asset('style/signin.css') }}" rel="stylesheet">
-    <link href="{{ asset('style/style.css') }}" rel="stylesheet">
+    <!-- =======================================================
+  * Template Name: NiceAdmin
+  * Template URL: https://bootstrapmade.com/nice-admin-bootstrap-admin-html-template/
+  * Updated: Apr 20 2024 with Bootstrap v5.3.3
+  * Author: BootstrapMade.com
+  * License: https://bootstrapmade.com/license/
+  ======================================================== -->
 </head>
 
-<body class="text-center">
-    <main class="form-signin">
-        <form action="{{ route('login') }}" method="POST">
-            @csrf
-            <img class="mb-4" src="{{ asset('images/login_logo.gif') }}" alt=""
-                style="max-width: 100%; height: auto; display: block; mb-20">
+<body>
 
-            <div class="card">
-                <div class="card-body login-card-body">
-                    <h1 class="h3 mb-3 fw-normal">Please sign in</h1>
-                    <div class="form-floating">
-                        <input type="email" class="form-control" name="email" id="email" placeholder="name@example.com">
-                        <label for="floatingInput">Email address</label>
+    <div class="container">
+        <section class="section register min-vh-100 d-flex flex-column align-items-center justify-content-center py-4">
+            <div class="container">
+                <div class="row justify-content-center">
+                    <div class="col-lg-4 col-md-6 d-flex flex-column align-items-center justify-content-center">
+
+                        <div class="d-flex justify-content-center py-4">
+                            <a href="index.html" class="logo d-flex align-items-center w-auto">
+                                <img src="{{ asset('images/Logo_PLN.png') }}" alt="">
+                                <span class="d-none d-lg-block">Iventori PLN</span>
+                            </a>
+                        </div><!-- End Logo -->
+
+                        <div class="card mb-3">
+
+                            <div class="card-body">
+
+                                <div class="pt-4 pb-2">
+                                    <h5 class="card-title text-center pb-0 fs-4">Login to Your Account</h5>
+                                    <p class="text-center small">Enter your username & password to login</p>
+                                </div>
+                                @if (session()->has('error'))
+                                    <div class="alert alert-danger bg-danger text-light border-0 alert-dismissible fade show"
+                                        role="alert">
+                                        {{ session('error') }}
+                                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="alert"
+                                            aria-label="Close"></button>
+                                    </div>
+                                @endif
+
+                                <form class="row g-3 needs-validation" method="post"
+                                    action="{{ route('loginpost') }}">
+                                    @csrf
+                                    <div class="col-12">
+                                        <label for="yourUsername" class="form-label">Email</label>
+                                        <div class="input-group has-validation">
+                                            <span class="input-group-text" id="inputGroupPrepend">@</span>
+                                            <input type="email" value="{{ old('email') }}" name="email"
+                                                class="form-control" id="yourUsername" required>
+                                            <div class="invalid-feedback">Please enter your email.</div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-12">
+                                        <label for="yourPassword" class="form-label">Password</label>
+                                        <div class="input-group has-validation">
+                                            <span class="input-group-text" id="inputGroupPrepend"> <i
+                                                    class="bi bi-lock-fill" style="color: gray"></i></span>
+                                            <input type="password" name="password" value="{{ old('password') }}"
+                                                class="form-control" id="yourPassword" required>
+                                            <div class="invalid-feedback">Please enter your password!</div>
+                                        </div>
+                                    </div>
+                                    <div class="col-12">
+                                        <button class="btn btn-primary w-100" type="submit">Login</button>
+                                    </div>
+                                </form>
+
+                            </div>
+                        </div>
+
+                        <div class="credits">
+                            <!-- All the links in the footer should remain intact. -->
+                            <!-- You can delete the links only if you purchased the pro version. -->
+                            <!-- Licensing information: https://bootstrapmade.com/license/ -->
+                            <!-- Purchase the pro version with working PHP/AJAX contact form: https://bootstrapmade.com/nice-admin-bootstrap-admin-html-template/ -->
+                            PT PLN Persero</a>
+                        </div>
+
                     </div>
-                    <div class="form-floating">
-                        <input type="password" class="form-control" name="password" id="password" placeholder="Password">
-                        <label for="floatingPassword">Password</label>
-                    </div>
-                    <button class="w-100 btn btn-lg btn-tambah" type="submit">Sign in</button>
                 </div>
             </div>
-            <p class="mt-5 mb-3 text-muted">&copy; Bimade from love <3 </p>
-        </form>
-    </main>
 
+        </section>
 
+    </div>
+    <!-- Vendor JS Files -->
+    <script src="{{ asset('NiceAdmin/assets/vendor/apexcharts/apexcharts.min.js') }}"></script>
+    <script src="{{ asset('NiceAdmin/assets/vendor/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
+    <script src="{{ asset('NiceAdmin/assets/vendor/chart.js/chart.umd.js') }}"></script>
+    <script src="{{ asset('NiceAdmin/assets/vendor/echarts/echarts.min.js') }}"></script>
+    <script src="{{ asset('NiceAdmin/assets/vendor/quill/quill.js') }}"></script>
+    <script src="{{ asset('NiceAdmin/assets/vendor/simple-datatables/simple-datatables.js') }}"></script>
+    <script src="{{ asset('NiceAdmin/assets/vendor/tinymce/tinymce.min.js') }}"></script>
+    <script src="{{ asset('NiceAdmin/assets/vendor/php-email-form/validate.js') }}"></script>
 
+    <!-- Template Main JS File -->
+    <script src="{{ asset('NiceAdmin/assets/js/main.js') }}"></script>
 </body>
 
+
 </html>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
-    integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous">
-</script>
