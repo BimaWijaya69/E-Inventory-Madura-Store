@@ -33,6 +33,7 @@ Route::middleware(['auth', PreventBackHistory::class])->group(function () {
 
     Route::get('/material-masuk', [TransaksiMaterialController::class, 'materialMasukView'])->name('material-masuks');
     Route::get('/material-masuk/create', [TransaksiMaterialController::class, 'createMaterialMasukView'])->name('material-masuks.create');
+    Route::get('/material-masuk/{id}/update', [TransaksiMaterialController::class, 'editMaterialMasukView'])->name('material-masuks.edit');
 
     Route::get('/material-keluar', [TransaksiMaterialController::class, 'materialKeluarView'])->name('material-keluars');
     Route::get('/material-keluar/create', [TransaksiMaterialController::class, 'createMaterialKeluarView'])->name('create-material-keluars');

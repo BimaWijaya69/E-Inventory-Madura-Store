@@ -129,27 +129,30 @@
                     <div class="mb-4">
                         <label class="form-label">Dokumentasi Bukti Penerimaan <span class="text-danger">*</span></label>
 
-                        <div class="border rounded-3 p-4 text-center bg-white"
-                            style="border-style: dashed; min-height: 180px; display:flex; align-items:center; justify-content:center; flex-direction:column;"
-                            id="upload-wrapper">
 
-                            <img id="preview-foto" src=""
-                                style="max-width: 200px; display:none; margin-bottom:10px; border-radius:6px;" />
+                        <div class="upload-area border rounded-3 p-4 text-center bg-white" id="upload-bukti-penerimaan"
+                            style="border-style: dashed; min-height: 180px; display:flex; align-items:center; justify-content:center; flex-direction:column; cursor:pointer;">
 
-                            <i class="bi bi-cloud-upload fs-1 mb-2 text-secondary" id="upload-icon"></i>
 
-                            <p class="mb-1">Klik untuk upload foto</p>
+                            <img id="preview-foto-penerimaan" class="foto-preview-doc" src=""
+                                style="max-width: 220px; display:none; margin-bottom:10px; border-radius:6px; object-fit:cover;" />
+
+
+                            <i class="bi bi-cloud-upload fs-1 mb-2 text-secondary icon-upload-penerimaan"></i>
+                            <p class="mb-1 text-muted text-upload-text">Klik untuk upload foto</p>
                             <small class="text-muted mb-2">PNG, JPG, JPEG maksimal 5MB</small>
-
-                            <input type="file" name="foto_bukti" id="foto_bukti" class="form-control w-auto mt-2"
-                                accept=".png,.jpg,.jpeg">
-
-                            <div class="invalid-feedback d-block"></div>
                         </div>
+
+
+                        <input type="file" name="foto_bukti" id="foto-bukti-penerimaan"
+                            class="d-none foto-dokumentasi" accept=".png,.jpg,.jpeg">
+
+                        <div class="invalid-feedback d-block"></div>
                     </div>
 
 
-                    {{-- BUTTONS --}}
+
+
                     <div class="d-flex justify-content-end gap-2">
                         <a href="{{ route('material-masuks') }}" class="btn btn-outline-secondary">
                             Batal
@@ -168,27 +171,47 @@
     <script>
         $(document).ready(function() {
 
-            $("#foto_bukti").on("change", function(e) {
+            $('#upload-bukti-penerimaan').on('click', function() {
+                $('#foto-bukti-penerimaan').click();
+            });
+
+            $('#foto-bukti-penerimaan').on('change', function(e) {
                 const file = e.target.files[0];
+                const preview = $('#preview-foto-penerimaan');
+                const icon = $('.icon-upload-penerimaan');
+                const text = $('.text-upload-text');
 
                 if (!file) {
-                    $("#preview-foto").hide();
-                    $("#upload-icon").show();
+                    preview.hide();
+                    icon.show();
+                    text.text('Klik untuk upload foto');
                     return;
                 }
 
-                if (!file.type.match("image.*")) {
-                    Swal.fire("Oops!", "Hanya file gambar (PNG/JPG/JPEG) yang diizinkan!", "error");
-                    $(this).val("");
-                    $("#preview-foto").hide();
-                    $("#upload-icon").show();
+                if (!file.type.match('image.*')) {
+                    Swal.fire('Oops!', 'Hanya file gambar (PNG/JPG/JPEG) yang diizinkan!', 'error');
+                    $(this).val('');
+                    preview.hide();
+                    icon.show();
+                    text.text('Klik untuk upload foto');
+                    return;
+                }
+
+                const maxSize = 5 * 1024 * 1024; // 5MB
+                if (file.size > maxSize) {
+                    Swal.fire('Oops!', 'Ukuran maksimal 5MB!', 'error');
+                    $(this).val('');
+                    preview.hide();
+                    icon.show();
+                    text.text('Klik untuk upload foto');
                     return;
                 }
 
                 const reader = new FileReader();
-                reader.onload = function(e) {
-                    $("#preview-foto").attr("src", e.target.result).show();
-                    $("#upload-icon").hide();
+                reader.onload = function(ev) {
+                    preview.attr('src', ev.target.result).show();
+                    icon.hide();
+                    text.text('Klik untuk ganti foto');
                 };
                 reader.readAsDataURL(file);
             });

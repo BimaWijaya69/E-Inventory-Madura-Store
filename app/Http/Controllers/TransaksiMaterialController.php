@@ -151,6 +151,17 @@ class TransaksiMaterialController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
+    public function editMaterialMasukView(string $id)
+    {
+        $breadcrumb = (object) [
+            'list' => ['Material Keluar', 'Update']
+        ];
+        $materials = Material::where('delet_at', '0')->get();
+        $data = $this->data;
+        $t = TransaksiMaterial::with(['dibuat_oleh', 'detail_transaksi', 'verifikasi_transaksi'])->where('id', $id)->firstOrFail();
+        return view('pages.transaksi.material-masuk.edit-penerimaan', compact('t', 'breadcrumb', 'materials', 'data'));
+    }
+
     public function editMaterialKeluarView(string $id)
     {
         $breadcrumb = (object) [
