@@ -17,7 +17,7 @@ return new class extends Migration
             $table->date('tanggal');
             $table->enum('jenis', ['0', '1']);
             $table->string('nama_pihak_transaksi');
-            $table->enum('keperluan', ['0', '1', '2', '3'])->comment("0=YANBUNG','1=P2TL','2=GANGGUAN','3=PLN");
+            $table->string('keperluan');
             $table->string('nomor_pelanggan')->nullable();
             $table->string('foto_bukti')->nullable();
             $table->string('foto_sr_sebelum')->nullable();

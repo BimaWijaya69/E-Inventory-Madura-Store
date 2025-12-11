@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\DetailTransaksiMaterial;
 use App\Models\Material;
 use App\Models\TransaksiMaterial;
+use App\Models\VerifikasiTraksaksi;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -29,10 +30,11 @@ class TransaksiMaterialController extends Controller
 
     public function materialKeluarView()
     {
+        $transaksis = TransaksiMaterial::with(['dibuat_oleh', 'detail_transaksi', 'verifikasi_transaksi'])->where('jenis', '1')->get();
         $breadcrumb = (object) [
             'list' => ['Material Keluar', '']
         ];
-        return view('pages.transaksi.material-keluar.index',  ['data' => $this->data, 'breadcrumb' => $breadcrumb]);
+        return view('pages.transaksi.material-keluar.index',  ['data' => $this->data, 'breadcrumb' => $breadcrumb, 'transaksis' => $transaksis]);
     }
 
     /**
@@ -40,7 +42,7 @@ class TransaksiMaterialController extends Controller
      */
     public function createMaterialKeluarView()
     {
-        $kode = $this->generateKode('KELUAR');
+        $kode = $this->generateKode('1');
         $materials = Material::where('delet_at', '0')->get();
         $breadcrumb = (object) [
             'list' => ['Material Keluar', 'Tambah']
@@ -84,6 +86,15 @@ class TransaksiMaterialController extends Controller
             $transaksi = TransaksiMaterial::create($data);
             if ($request->has('materials')) {
                 foreach ($request->materials as $item) {
+                    $material = Material::findOrFail($item['id']);
+                    if ($request->jenis == '1') {
+                        if ($material->stok < $item['jumlah']) {
+                            throw new Exception("Stok '{$material->nama_material}' tidak mencukupi. Sisa: {$material->stok}, Diminta: {$item['jumlah']}");
+                        }
+                        $material->decrement('stok', $item['jumlah']);
+                    } else {
+                        $material->increment('stok', $item['jumlah']);
+                    }
                     DetailTransaksiMaterial::create([
                         'transaksi_id' => $transaksi->id,
                         'material_id'  => $item['id'],
@@ -91,6 +102,12 @@ class TransaksiMaterialController extends Controller
                     ]);
                 }
             }
+
+            VerifikasiTraksaksi::create([
+                'transaksi_id' => $transaksi->id,
+                'status' => $this->data->role == '1' ? '1' : '0',
+                'diverifikasi_oleh' => $this->data->role == '1' ? $this->data->id : null
+            ]);
 
             DB::commit();
             $suffixRoute = ($request->jenis == 1) ? 'keluars' : 'masuks';
@@ -102,11 +119,9 @@ class TransaksiMaterialController extends Controller
             ], 200);
         } catch (Exception $e) {
             DB::rollBack();
-
             if (isset($data['foto_bukti'])) Storage::disk('public')->delete($data['foto_bukti']);
             if (isset($data['foto_sr_sebelum'])) Storage::disk('public')->delete($data['foto_sr_sebelum']);
             if (isset($data['foto_sr_sesudah'])) Storage::disk('public')->delete($data['foto_sr_sesudah']);
-
             return response()->json([
                 'success' => false,
                 'message' => 'Terjadi kesalahan: ' . $e->getMessage()
@@ -245,7 +260,7 @@ class TransaksiMaterialController extends Controller
 
     private function generateKode($jenisTransaksi)
     {
-        $prefix = ($jenisTransaksi == 'KELUAR') ? 'TRK' : 'TRM';
+        $prefix = ($jenisTransaksi == '1') ? 'TRK' : 'TRM';
 
         $last = TransaksiMaterial::where('jenis', $jenisTransaksi)
             ->orderBy('id', 'desc')
