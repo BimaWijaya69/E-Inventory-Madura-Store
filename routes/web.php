@@ -28,11 +28,14 @@ Route::middleware(['auth', PreventBackHistory::class])->group(function () {
     Route::get('/manajmen-users', [UserController::class, 'index'])->name('users');
 
     Route::post('/transaksi', [TransaksiMaterialController::class, 'store'])->name('transaksi');
+    Route::put('/transaksi/{id}', [TransaksiMaterialController::class, 'update'])->name('transaksi.update');
+    Route::delete('/transaksi/{id}', [TransaksiMaterialController::class, 'destroy'])->name('transaksi.delete');
 
     Route::get('/material-masuk', [TransaksiMaterialController::class, 'materialMasukView'])->name('material-masuks');
     Route::get('/material-masuk/create', [TransaksiMaterialController::class, 'createMaterialMasukView'])->name('material-masuks.create');
 
     Route::get('/material-keluar', [TransaksiMaterialController::class, 'materialKeluarView'])->name('material-keluars');
     Route::get('/material-keluar/create', [TransaksiMaterialController::class, 'createMaterialKeluarView'])->name('create-material-keluars');
+    Route::get('/material-keluar/{id}/update', [TransaksiMaterialController::class, 'editMaterialKeluarView'])->name('edit-material-keluars');
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 });
