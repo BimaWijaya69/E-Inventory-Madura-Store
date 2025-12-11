@@ -53,7 +53,6 @@
                                                             data-id="{{ $material->id }}">
                                                             <i class="bi bi-x-circle"></i>
                                                         </button>
-
                                                     </div>
                                                 </td>
                                             </tr>

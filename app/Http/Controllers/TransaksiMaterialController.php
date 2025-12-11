@@ -140,9 +140,15 @@ class TransaksiMaterialController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(string $id)
+    public function editMaterialKeluarView(string $id)
     {
-        //
+        $breadcrumb = (object) [
+            'list' => ['Material Keluar', 'Update']
+        ];
+        $materials = Material::where('delet_at', '0')->get();
+        $data = $this->data;
+        $t = TransaksiMaterial::with(['dibuat_oleh', 'detail_transaksi', 'verifikasi_transaksi'])->where('id', $id)->firstOrFail();
+        return view('pages.transaksi.material-keluar.edit-transaksi-material-kel', compact('t', 'breadcrumb', 'materials', 'data'));
     }
 
     /**
@@ -151,9 +157,27 @@ class TransaksiMaterialController extends Controller
     public function update(Request $request, $id)
     {
         $transaksi = TransaksiMaterial::findOrFail($id);
-        DB::beginTransaction();
 
+        if (!$request->has('materials') || count($request->materials) == 0) {
+            return response()->json(['success' => false, 'message' => 'Material tidak boleh kosong!'], 422);
+        }
+
+        DB::beginTransaction();
         try {
+            $oldDetails = $transaksi->detail_transaksi;
+
+            foreach ($oldDetails as $oldItem) {
+                $material = Material::find($oldItem->material_id);
+
+                if ($material) {
+                    if ($transaksi->jenis == '1') {
+                        $material->increment('stok', $oldItem->jumlah);
+                    } else {
+                        $material->decrement('stok', $oldItem->jumlah);
+                    }
+                }
+            }
+            $transaksi->detail_transaksi()->delete();
             $data = [
                 'tanggal'              => $request->tanggal,
                 'jenis'                => $request->jenis,
@@ -161,11 +185,8 @@ class TransaksiMaterialController extends Controller
                 'keperluan'            => $request->keperluan,
                 'nomor_pelanggan'      => $request->nomor_pelanggan,
             ];
-
             if ($request->hasFile('foto_bukti')) {
-                if ($transaksi->foto_bukti) {
-                    Storage::disk('public')->delete($transaksi->foto_bukti);
-                }
+                if ($transaksi->foto_bukti) Storage::disk('public')->delete($transaksi->foto_bukti);
                 $data['foto_bukti'] = $request->file('foto_bukti')->store('bukti_transaksi', 'public');
             }
 
@@ -181,32 +202,39 @@ class TransaksiMaterialController extends Controller
             } else {
                 if ($transaksi->foto_sr_sebelum) Storage::disk('public')->delete($transaksi->foto_sr_sebelum);
                 if ($transaksi->foto_sr_sesudah) Storage::disk('public')->delete($transaksi->foto_sr_sesudah);
-
                 $data['foto_sr_sebelum'] = null;
                 $data['foto_sr_sesudah'] = null;
             }
 
             $transaksi->update($data);
-            $transaksi->detail_transaksi()->delete();
+            foreach ($request->materials as $newItem) {
+                $material = Material::findOrFail($newItem['id']);
+                $qtyBaru  = $newItem['jumlah'];
 
-            if ($request->has('materials')) {
-                foreach ($request->materials as $item) {
-                    DetailTransaksiMaterial::create([
-                        'transaksi_id' => $transaksi->id,
-                        'material_id'  => $item['id'],
-                        'jumlah'       => $item['jumlah'],
-                    ]);
+                if ($request->jenis == '1') {
+                    if ($material->stok < $qtyBaru) {
+                        throw new Exception("Stok '{$material->nama_material}' tidak cukup! Tersedia: {$material->stok}, Diminta: {$qtyBaru}");
+                    }
+
+                    $material->decrement('stok', $qtyBaru);
+                } else {
+                    $material->increment('stok', $qtyBaru);
                 }
+                DetailTransaksiMaterial::create([
+                    'transaksi_id' => $transaksi->id,
+                    'material_id'  => $newItem['id'],
+                    'jumlah'       => $qtyBaru,
+                ]);
             }
 
             DB::commit();
 
-            $suffixRoute = ($request->jenis == 1) ? 'pengeluaran' : 'penerimaan';
+            $suffixRoute = ($request->jenis == 1) ? 'keluars' : 'masuks';
 
             return response()->json([
                 'success'  => true,
                 'message'  => 'Data transaksi berhasil diperbarui!',
-                'redirect' => route('transaksi-material-' . $suffixRoute)
+                'redirect' => route('material-' . $suffixRoute)
             ], 200);
         } catch (Exception $e) {
             DB::rollBack();
@@ -238,16 +266,16 @@ class TransaksiMaterialController extends Controller
             }
             $transaksi->detail_transaksi()->delete();
 
-            $transaksi->delete();
+            $transaksi->update(['delet_at' => '1']);
 
             DB::commit();
 
-            $suffixRoute = ($jenis == 1) ? 'pengeluaran' : 'penerimaan';
+            $suffixRoute = ($jenis == 1) ? 'keluars' : 'masuks';
 
             return response()->json([
                 'success'  => true,
                 'message'  => 'Data transaksi berhasil dihapus!',
-                'redirect' => route('transaksi-material-' . $suffixRoute)
+                'redirect' => route('material-' . $suffixRoute)
             ], 200);
         } catch (Exception $e) {
             DB::rollBack();
