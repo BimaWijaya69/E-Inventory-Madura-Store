@@ -17,34 +17,11 @@ class MaterialController extends Controller
         $breadcrumb = (object) [
             'list' => ['Manejemen Material', '']
         ];
-        return view('pages.materials.index',  ['data' => $data, 'breadcrumb' => $breadcrumb]);
+
+        $materials = Material::all();
+        return view('pages.materials.index',  ['data' => $data, 'breadcrumb' => $breadcrumb, 'materials' => $materials]);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-
-        $lastMaterial = Material::orderBy('id', 'desc')->first();
-        $nextCode = 'MAT-001';
-
-        if ($lastMaterial) {
-            if (preg_match('/MAT-(\d+)/', $lastMaterial->kode_material, $matches)) {
-                $nextNumber = intval($matches[1]) + 1;
-                $nextCode = 'MAT-' . str_pad($nextNumber, 3, '0', STR_PAD_LEFT);
-            } else {
-                $nextNumber = $lastMaterial->id + 1;
-                $nextCode = 'MAT-' . str_pad($nextNumber, 3, '0', STR_PAD_LEFT);
-            }
-        }
-        // sesuaikan nanti
-        return view('admin.master.create', compact('nextCode'));
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
         $request->validate([
@@ -60,7 +37,7 @@ class MaterialController extends Controller
 
         if ($saveData) {
             return response()->json([
-                'success' => true
+                'success' => true,
             ]);
         } else {
             return response()->json([
@@ -79,7 +56,7 @@ class MaterialController extends Controller
      */
     public function edit(string $id)
     {
-        //
+        return Material::findOrFail($id);
     }
 
     /**
@@ -87,26 +64,39 @@ class MaterialController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        $data = Material::where('id', $id)->firstOrFail();
-        if ($data->nama_material != $request->nama_material) {
+        $data = Material::findOrFail($id);
+
+        if ($data->nama_material !== $request->e_nama_material) {
             $request->validate([
-                'nama_material' => 'required|unique:materials,nama_material',
+                'e_nama_material' => 'required|unique:materials,nama_material,' . $id,
             ], [
-                'nama_material.unique' => 'Nama material sudah ada.',
+                'e_nama_material.unique' => 'Nama material sudah ada.',
             ]);
         }
 
-        $update = $data->update($request->all());
-        if ($update) {
+        try {
+
+            $updateData = [
+                'nama_material' => $request->e_nama_material,
+                'satuan'        => $request->e_satuan,
+                'min_stok'      => $request->e_min_stok,
+                'stok_awal'     => $request->e_stok_awal,
+            ];
+
+            $data->update($updateData);
+
             return response()->json([
-                'success' => true
+                'success' => true,
+                'message' => 'Data berhasil diperbarui'
             ]);
-        } else {
+        } catch (\Exception $e) {
             return response()->json([
-                'success' => false
-            ]);
+                'success' => false,
+                'message' => 'Gagal memperbarui data: ' . $e->getMessage()
+            ], 500);
         }
     }
+
 
     /**
      * Remove the specified resource from storage.
@@ -116,6 +106,24 @@ class MaterialController extends Controller
         Material::where('id', $id)->update(['delet_at' => '1']);
         return response()->json([
             'success' => true
+        ]);
+    }
+
+    public function generateKode()
+    {
+        $last = Material::orderBy('id', 'desc')->first();
+
+        if (!$last) {
+            $nextNumber = 1;
+        } else {
+            $lastKode = (int) substr($last->kode_material, 2);
+            $nextNumber = $lastKode + 1;
+        }
+
+        $kode = 'MT' . str_pad($nextNumber, 3, '0', STR_PAD_LEFT);
+
+        return response()->json([
+            'kode' => $kode
         ]);
     }
 }
