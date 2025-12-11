@@ -7,7 +7,7 @@
             <div class="col-lg-12">
                 <div class="card">
                     <div class="card-body">
-                        <h5 class="card-title d-flex justify-content-end">
+                        <h5 class="card-title">
                             <button class="btn btn-small btn-outline-primary" data-bs-toggle="modal"
                                 data-bs-target="#exampleModal">Tambah Material</button>
                         </h5>

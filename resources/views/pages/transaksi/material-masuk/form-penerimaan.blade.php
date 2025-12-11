@@ -16,34 +16,52 @@
 
                 <hr>
 
-                <form id="form-penerimaan" action="#" method="POST" enctype="multipart/form-data">
+                <form id="form-penerimaan" action="{{ route('transaksi') }}" method="POST" enctype="multipart/form-data">
                     @csrf
-
-                    {{-- TANGGAL + NAMA PENERIMA --}}
+                    <input type="hidden" value="0" name="jenis">
                     <div class="row mb-3">
-                        <div class="col-md-4 mb-3 mb-md-0">
-                            <label class="form-label">Tanggal Penerimaan <span class="text-danger">*</span></label>
-                            <input type="date" name="tanggal" class="form-control">
+                        <div class="col-md-6 mb-3 mb-md-0">
+                            <div class="mb-3">
+                                <label for="exampleInputKode" class="form-label">Kode Transaksi</label>
+                                <input type="text" class="form-control" id="exampleInputKode" name="kode_transaksi"
+                                    value="{{ $kode }}" readonly>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="exampleInputKode" class="form-label">Jenis Transaksi</label>
+                                <input type="text" class="form-control" id="exampleInputKode" value="Penerimaan"
+                                    readonly>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6 mb-3 mb-md-0">
+                            <label for="exampleInputTanggal" class="form-label">Tanggal Penerimaan<span
+                                    class="text-danger">*</span></label>
+                            <input type="date" name="tanggal" class="form-control" id="exampleInputTanggal">
                             <div class="invalid-feedback"></div>
                         </div>
 
-                        <div class="col-md-8">
-                            <label class="form-label">Nama Penerima <span class="text-danger">*</span></label>
-                            <input type="text" name="nama_penerima" class="form-control"
-                                placeholder="Masukkan nama penerima/supplier">
+                        <div class="col-md-6">
+                            <label for="exampleInputPenerima" class="form-label">Nama Penerima<span
+                                    class="text-danger">*</span></label>
+                            <input type="text" name="nama_pihak_transaksi" class="form-control"
+                                placeholder="Masukkan nama penerima" id="exampleInputPenerima">
                             <div class="invalid-feedback"></div>
                         </div>
                     </div>
 
                     {{-- KEPERLUAN --}}
                     <div class="row mb-4">
-                        <div class="col-md-4">
-                            <label class="form-label">Keperluan <span class="text-danger">*</span></label>
-                            <select name="keperluan" class="form-select">
+                        <div class="col-md-6">
+                            <label for="exampleInputKeperluan" class="form-label">Keperluan <span
+                                    class="text-danger">*</span></label>
+                            <select name="keperluan" class="form-select" aria-label="Default select example">
                                 <option value="">Pilih Keperluan</option>
-                                <option value="pemeliharaan">Pemeliharaan</option>
-                                <option value="gangguan">Gangguan</option>
-                                <option value="pengembangan">Pengembangan Jaringan</option>
+                                <option value="YANBUNG">YANBUNG</option>
+                                <option value="P2TL">P2TL</option>
+                                <option value="GANGGUAN">GANGGUAN</option>
+                                <option value="PLN">PLN</option>
                             </select>
                             <div class="invalid-feedback"></div>
                         </div>
@@ -57,41 +75,53 @@
                         </button>
                     </div>
 
-                    {{-- WRAPPER MATERIAL (KAYAK CARD DI DALAM) --}}
                     <div class="mb-4">
-                        <div class="p-3 rounded border bg-light" id="material-list">
-
-                            {{-- ROW MATERIAL 1 --}}
-                            <div class="row g-3 align-items-end mb-3 material-item">
-                                <div class="col-md-6">
-                                    <label class="form-label">Material <span class="text-danger">*</span></label>
-                                    <select name="materials[0][material_id]" class="form-select">
-                                        <option value="">Pilih Material</option>
-                                        {{-- nanti diisi dari DB --}}
-                                        <option value="1">MAT-001 - Testing Material</option>
-                                    </select>
-                                    <div class="invalid-feedback"></div>
-                                </div>
-
-                                <div class="col-md-2">
-                                    <label class="form-label">Jumlah <span class="text-danger">*</span></label>
-                                    <input type="number" name="materials[0][jumlah]" class="form-control" value="1"
-                                        min="1">
-                                    <div class="invalid-feedback"></div>
-                                </div>
-
-                                <div class="col-md-2">
-                                    <label class="form-label">Satuan</label>
-                                    <input type="text" class="form-control" value="PCS" disabled>
-                                </div>
-
-                                <div class="col-md-2 d-grid">
-                                    <button type="button" class="btn btn-danger btn-remove-material">
-                                        <i class="bi bi-trash"></i>
-                                    </button>
-                                </div>
+                        <div class="p-3 rounded border bg-light">
+                            <div class="table-responsive">
+                                <table class="table table-bordered">
+                                    <thead class="table-light">
+                                        <tr>
+                                            <th width="40%">Material <span class="text-danger">*</span></th>
+                                            <th width="20%">Jumlah <span class="text-danger">*</span></th>
+                                            <th width="20%">Satuan</th>
+                                            <th width="20%">Aksi</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="material-rows">
+                                        <tr class="material-row">
+                                            <td>
+                                                <select class="form-select material-select" name="materials[0][id]"
+                                                    data-index="0" required>
+                                                    <option value="">Pilih Material</option>
+                                                    @foreach ($materials as $m)
+                                                        <option value="{{ $m->id }}"
+                                                            data-satuan="{{ $m->satuan }}"
+                                                            data-stok="{{ $m->stok }}"
+                                                            data-min-stok="{{ $m->min_stok }}">
+                                                            {{ $m->nama_material }} - Stok: {{ $m->stok }}
+                                                        </option>
+                                                    @endforeach
+                                                </select>
+                                            </td>
+                                            <td>
+                                                <input type="number" class="form-control jumlah-input"
+                                                    name="materials[0][jumlah]" min="1" required>
+                                                <small class="text-danger min-stok-warning" style="display: none;"></small>
+                                            </td>
+                                            <td>
+                                                <input type="text" class="form-control satuan-display"
+                                                    name="materials[0][satuan]" readonly>
+                                            </td>
+                                            <td>
+                                                <button type="button" class="btn btn-danger btn-sm btn-remove-row"
+                                                    disabled>
+                                                    <i class="bi bi-trash"></i>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
                             </div>
-
                         </div>
                     </div>
 
@@ -135,240 +165,196 @@
         </div>
     </section>
 
-
-
     <script>
         $(document).ready(function() {
-            $('#foto_bukti').on('change', function(e) {
+
+            $("#foto_bukti").on("change", function(e) {
                 const file = e.target.files[0];
 
                 if (!file) {
-                    $('#preview-foto').hide();
-                    $('#upload-icon').show();
+                    $("#preview-foto").hide();
+                    $("#upload-icon").show();
                     return;
                 }
 
-                if (!file.type.match('image.*')) {
-                    Swal.fire({
-                        icon: "error",
-                        title: "Oops...",
-                        text: "File bukti harus berupa gambar (PNG/JPG/JPEG)!"
-                    });
-                    $(this).val('');
-                    $('#preview-foto').hide();
-                    $('#upload-icon').show();
+                if (!file.type.match("image.*")) {
+                    Swal.fire("Oops!", "Hanya file gambar (PNG/JPG/JPEG) yang diizinkan!", "error");
+                    $(this).val("");
+                    $("#preview-foto").hide();
+                    $("#upload-icon").show();
                     return;
                 }
 
                 const reader = new FileReader();
                 reader.onload = function(e) {
-                    $('#preview-foto').attr('src', e.target.result).show();
-                    $('#upload-icon').hide();
+                    $("#preview-foto").attr("src", e.target.result).show();
+                    $("#upload-icon").hide();
                 };
                 reader.readAsDataURL(file);
             });
 
-            $('#btn-add-material').on('click', function() {
-                const $list = $('#material-list');
-                const $items = $list.find('.material-item');
-                const index = $items.length;
+            // =======================
+            //  TAMBAH / HAPUS ROW MATERIAL
+            // =======================
+            let rowIndex = 1;
 
-                const $clone = $items.first().clone();
-
-                // reset value
-                $clone.find('select').val('');
-                $clone.find('input[type="number"]').val(1);
-
-                // reset error
-                $clone.find('.is-invalid').removeClass('is-invalid');
-                $clone.find('.invalid-feedback').text('');
-
-                // ganti index [0] -> [index]
-                $clone.find('select, input').each(function() {
-                    let name = $(this).attr('name');
-                    if (!name) return;
-                    name = name.replace(/\[\d+\]/, '[' + index + ']');
-                    $(this).attr('name', name);
-                });
-
-                $list.append($clone);
-            });
-
-            $('#material-list').on('click', '.btn-remove-material', function() {
-                const $items = $('#material-list .material-item');
-                if ($items.length <= 1) return; // minimal 1
-                $(this).closest('.material-item').remove();
-            });
-
-            function resetErrors() {
-                $('#form-penerimaan').find('.is-invalid').removeClass('is-invalid');
-                $('#form-penerimaan').find('.invalid-feedback').text('');
+            function updateRemoveButtons() {
+                const count = $(".material-row").length;
+                $(".btn-remove-row").prop("disabled", count === 1);
             }
 
-            function validateFrontEnd() {
-                let isValid = true;
+            $("#btn-add-material").on("click", function() {
+                const newRow = `
+            <tr class="material-row">
+                <td>
+                    <select class="form-select material-select" name="materials[${rowIndex}][id]" data-index="${rowIndex}" required>
+                        <option value="">Pilih Material</option>
+                        @foreach ($materials as $m)
+                            <option value="{{ $m->id }}"
+                                data-satuan="{{ $m->satuan }}"
+                                data-stok="{{ $m->stok }}"
+                                data-min-stok="{{ $m->min_stok }}">
+                                {{ $m->nama_material }} - Stok: {{ $m->stok }}
+                            </option>
+                        @endforeach
+                    </select>
+                </td>
 
-                const tanggal = $('input[name="tanggal"]').val().trim();
-                const namaPenerima = $('input[name="nama_penerima"]').val().trim();
-                const keperluan = $('select[name="keperluan"]').val();
-                const fileBukti = $('#foto_bukti')[0].files[0];
+                <td>
+                    <input type="number" class="form-control jumlah-input"
+                        name="materials[${rowIndex}][jumlah]" min="1" required>
+                    <small class="text-danger min-stok-warning" style="display:none;"></small>
+                </td>
 
-                // tanggal
-                if (tanggal === '') {
-                    $('input[name="tanggal"]').addClass('is-invalid');
-                    Swal.fire({
-                        icon: "error",
-                        title: "Oops...",
-                        text: "Tanggal penerimaan harus diisi!"
-                    });
-                    return false;
+                <td>
+                    <input type="text" class="form-control satuan-display" readonly>
+                </td>
+
+                <td>
+                    <button type="button" class="btn btn-danger btn-sm btn-remove-row">
+                        <i class="bi bi-trash"></i>
+                    </button>
+                </td>
+            </tr>
+        `;
+
+                $("#material-rows").append(newRow);
+                rowIndex++;
+                updateRemoveButtons();
+            });
+
+            $(document).on("click", ".btn-remove-row", function() {
+                $(this).closest(".material-row").remove();
+                updateRemoveButtons();
+            });
+
+
+            $(document).on("change", ".material-select", function() {
+                const opt = $(this).find("option:selected");
+                const satuan = opt.data("satuan");
+                const stok = opt.data("stok");
+                const minStok = opt.data("min-stok");
+
+                const row = $(this).closest("tr");
+
+                row.find(".satuan-display").val(satuan || "");
+                const jumlah = row.find(".jumlah-input");
+
+                jumlah.attr("max", stok).attr("data-min-stok", minStok);
+                jumlah.val("");
+
+                row.find(".min-stok-warning").hide().text("");
+            });
+
+            // =======================
+            //  VALIDASI JUMLAH MATERIAL
+            // =======================
+            $(document).on("input", ".jumlah-input", function() {
+                const jumlah = parseInt($(this).val());
+                const max = parseInt($(this).attr("max"));
+                const minStok = parseInt($(this).attr("data-min-stok"));
+
+                const row = $(this).closest("tr");
+                const warning = row.find(".min-stok-warning");
+
+                if (max && jumlah > max) {
+                    Swal.fire("Peringatan", "Jumlah melebihi stok tersedia (" + max + ")", "warning");
+                    $(this).val(max);
                 }
 
-                // nama penerima
-                if (namaPenerima === '') {
-                    $('input[name="nama_penerima"]').addClass('is-invalid');
-                    Swal.fire({
-                        icon: "error",
-                        title: "Oops...",
-                        text: "Nama penerima harus diisi!"
-                    });
-                    return false;
-                }
-
-                // keperluan
-                if (!keperluan) {
-                    $('select[name="keperluan"]').addClass('is-invalid');
-                    Swal.fire({
-                        icon: "error",
-                        title: "Oops...",
-                        text: "Keperluan harus dipilih!"
-                    });
-                    return false;
-                }
-
-                // minimal 1 material valid
-                let hasValidMaterial = false;
-                $('#material-list .material-item').each(function() {
-                    const materialId = $(this).find('select[name^="materials"]').val();
-                    const jumlah = $(this).find('input[name^="materials"][type="number"]').val();
-
-                    if (!materialId || materialId === '') {
-                        $(this).find('select[name^="materials"]').addClass('is-invalid');
-                    } else if (!jumlah || jumlah <= 0) {
-                        $(this).find('input[name^="materials"][type="number"]').addClass('is-invalid');
+                if (minStok && jumlah) {
+                    const sisa = max - jumlah;
+                    if (sisa < minStok) {
+                        warning
+                            .text("Sisa stok " + sisa + " lebih kecil dari minimal stok " + minStok)
+                            .show();
+                        $(this).addClass("border-danger");
                     } else {
-                        hasValidMaterial = true;
+                        warning.hide();
+                        $(this).removeClass("border-danger");
                     }
-                });
-
-                if (!hasValidMaterial) {
-                    Swal.fire({
-                        icon: "error",
-                        title: "Oops...",
-                        text: "Minimal 1 material dengan jumlah valid harus diisi!"
-                    });
-                    return false;
                 }
+            });
 
-                // bukti foto wajib (kalau requirement begitu)
-                if (!fileBukti) {
-                    $('#foto_bukti').addClass('is-invalid');
-                    Swal.fire({
-                        icon: "error",
-                        title: "Oops...",
-                        text: "Dokumentasi bukti penerimaan wajib diupload!"
-                    });
-                    return false;
-                }
-
-                return isValid;
-            }
-
-
-            $('#form-penerimaan').on('submit', function(e) {
+            // =======================
+            //  SUBMIT FORM VIA AJAX
+            // =======================
+            $("#form-penerimaan").on("submit", function(e) {
                 e.preventDefault();
 
-                resetErrors();
+                const tanggal = $("input[name='tanggal']").val().trim();
+                const nama = $("input[name='nama_pihak_transaksi']").val().trim();
+                const keperluan = $("select[name='keperluan']").val();
+                const foto = $("#foto_bukti").val();
 
-                // cek dulu FE validation
-                if (!validateFrontEnd()) {
-                    return;
-                }
+                // FRONT VALIDATION
+                if (!tanggal) return Swal.fire("Oops!", "Tanggal wajib diisi!", "error");
+                if (!nama) return Swal.fire("Oops!", "Nama penerima wajib diisi!", "error");
+                if (!keperluan) return Swal.fire("Oops!", "Keperluan wajib dipilih!", "error");
+                if (!foto) return Swal.fire("Oops!", "Upload bukti foto wajib!", "error");
 
-                const $form = $(this);
+                let hasMaterial = false;
+                $(".material-select").each(function() {
+                    if ($(this).val()) hasMaterial = true;
+                });
+                if (!hasMaterial) return Swal.fire("Oops!", "Minimal satu material harus dipilih!",
+                    "error");
+
                 const formData = new FormData(this);
 
-                const $btn = $('#btn-submit');
-                const oldHtml = $btn.html();
-
-                $btn.prop('disabled', true).html(
-                    '<span class="spinner-border spinner-border-sm me-1"></span>Menyimpan...');
-
                 $.ajax({
-                    url: $form.attr('action'),
-                    type: 'POST',
+                    url: $(this).attr("action"),
+                    method: $(this).attr("method"),
                     data: formData,
                     processData: false,
                     contentType: false,
 
-                    success: function(res) {
+                    beforeSend() {
                         Swal.fire({
-                            title: "Berhasil",
-                            text: "Penerimaan material berhasil disimpan.",
-                            icon: "success",
-                            confirmButtonColor: "#18a342"
-                        }).then(() => {
-                            // kalau BE nanti kirim redirect, pakai itu
-                            if (res.redirect) {
-                                window.location.href = res.redirect;
-                            } else {
-                                window.location.href = '{{ route('material-masuks') }}';
-                            }
+                            title: "Menyimpan...",
+                            text: "Mohon tunggu sebentar",
+                            allowOutsideClick: false,
+                            didOpen: () => Swal.showLoading()
                         });
                     },
 
-                    error: function(xhr) {
-                        // error validasi Laravel (422)
-                        if (xhr.status === 422 && xhr.responseJSON && xhr.responseJSON.errors) {
-                            const errors = xhr.responseJSON.errors;
-
-                            $.each(errors, function(field, messages) {
-                                let name = field
-                                    .replace(/\.(\d+)\./g, '[$1][')
-                                    .replace(/\.(\w+)$/g, '][$1]');
-
-                                const $input = $('[name="' + name + '"]', $form);
-
-                                if ($input.length) {
-                                    $input.addClass('is-invalid');
-
-                                    let $feedback = $input.siblings(
-                                        '.invalid-feedback');
-                                    if (!$feedback.length) {
-                                        $feedback = $input.parent().find(
-                                            '.invalid-feedback').first();
-                                    }
-                                    $feedback.text(messages[0]);
-                                }
+                    success(response) {
+                        Swal.fire("Berhasil!", "Penerimaan material disimpan!", "success")
+                            .then(() => {
+                                window.location.href = response.redirect ||
+                                    "{{ route('material-masuks') }}";
                             });
-
-                            Swal.fire({
-                                icon: "error",
-                                title: "Oops...",
-                                text: "Beberapa input belum valid. Silakan cek kembali form Anda."
-                            });
-                        } else {
-                            console.error(xhr);
-                            Swal.fire({
-                                icon: "error",
-                                title: "Oops...",
-                                text: "Terjadi kesalahan pada server."
-                            });
-                        }
                     },
 
-                    complete: function() {
-                        $btn.prop('disabled', false).html(oldHtml);
+                    error(xhr) {
+                        let msg = "Terjadi kesalahan.";
+
+                        if (xhr.status === 422) {
+                            const errors = xhr.responseJSON.errors;
+                            msg = Object.values(errors)[0][0];
+                        }
+
+                        Swal.fire("Error", msg, "error");
                     }
                 });
             });

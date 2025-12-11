@@ -12,7 +12,7 @@
                         </h5>
                         <form action="" id="form-pengeluaran" action="{{ route('transaksi') }}" method="POST">
                             @csrf
-                            <input type="hidden" value="0" name="jenis">
+                            <input type="hidden" value="1" name="jenis">
                             <div class="row">
                                 <div class="col-md-6">
                                     <div class="mb-3">
@@ -53,10 +53,10 @@
                                                 class="text-danger">*</span></label>
                                         <select class="form-select" aria-label="Default select example" name="keperluan">
                                             <option value="">Pilih Keperluan</option>
-                                            <option value="0">YANBUNG</option>
-                                            <option value="1">P2TL</option>
-                                            <option value="2">GANGGUAN</option>
-                                            <option value="3">PLN</option>
+                                            <option value="YANBUNG">YANBUNG</option>
+                                            <option value="P2TL">P2TL</option>
+                                            <option value="GANGGUAN">GANGGUAN</option>
+                                            <option value="PLN">PLN</option>
                                         </select>
                                     </div>
                                 </div>
@@ -93,8 +93,8 @@
                                             <tbody id="material-rows">
                                                 <tr class="material-row">
                                                     <td>
-                                                        <select class="form-select material-select"
-                                                            name="materials[0][id_material]" data-index="0" required>
+                                                        <select class="form-select material-select" name="materials[0][id]"
+                                                            data-index="0" required>
                                                             <option value="">Pilih Material</option>
                                                             @foreach ($materials as $m)
                                                                 <option value="{{ $m->id }}"
@@ -236,7 +236,7 @@
                 let newRow = `
                     <tr class="material-row">
                         <td>
-                            <select class="form-select material-select" name="materials[${rowIndex}][id_material]" data-index="${rowIndex}" required>
+                            <select class="form-select material-select" name="materials[${rowIndex}][id]" data-index="${rowIndex}" required>
                                 <option value="">Pilih Material</option>
                                 @foreach ($materials as $m)
                                     <option value="{{ $m->id }}" data-satuan="{{ $m->satuan }}" data-stok="{{ $m->stok }}">
@@ -396,7 +396,7 @@
                 let tanggal = $("input[name='tanggal']").val().trim();
                 let nama_pengambil = $("input[name='nama_pihak_transaksi']").val().trim();
                 let keperluan = $("select[name='keperluan']").val();
-                let foto_bukti = $("select[name='foto_bukti']").val();
+                let foto_bukti = $("input[name='foto_bukti']").val();
 
                 if (kode_transaksi === "") {
                     Swal.fire('Oops!', 'Kode transaksi wajib diisi!', 'error');
@@ -414,7 +414,7 @@
                     Swal.fire('Oops!', 'Keperluan wajib dipilih!', 'error');
                     return false;
                 }
-                if (foto_bukti === "") {
+                if (!foto_bukti || foto_bukti === "") {
                     Swal.fire('Oops!', 'Upload bukti foto wajib diisi!', 'error');
                     return false;
                 }
@@ -451,7 +451,7 @@
                 let formData = new FormData(this);
 
                 $.ajax({
-                    url: $(this).attr('action'),
+                    url: '{{ route('transaksi') }}',
                     method: 'POST',
                     data: formData,
                     processData: false,
