@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\DetailTransaksiMaterial;
+use App\Models\Material;
 use App\Models\TransaksiMaterial;
 use Exception;
 use Illuminate\Http\Request;
@@ -12,33 +13,39 @@ use Illuminate\Support\Facades\Storage;
 
 class TransaksiMaterialController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
+    protected $data;
+    public function __construct()
+    {
+        $this->data = Auth::user();
+    }
+
     public function materialMasukView()
     {
-        $data = Auth::user();
         $breadcrumb = (object) [
             'list' => ['Materaial Masuk', '']
         ];
-        return view('pages.transaksi.material-masuk',  ['data' => $data, 'breadcrumb' => $breadcrumb]);
+        return view('pages.transaksi.material-masuk',  ['data' => $this->data, 'breadcrumb' => $breadcrumb]);
     }
 
     public function materialKeluarView()
     {
-        $data = Auth::user();
         $breadcrumb = (object) [
             'list' => ['Material Keluar', '']
         ];
-        return view('pages.transaksi.material-keluar',  ['data' => $data, 'breadcrumb' => $breadcrumb]);
+        return view('pages.transaksi.material-keluar.index',  ['data' => $this->data, 'breadcrumb' => $breadcrumb]);
     }
 
     /**
      * Show the form for creating a new resource.
      */
-    public function create()
+    public function createMaterialKeluarView()
     {
-        //
+        $kode = $this->generateKode('KELUAR');
+        $materials = Material::where('delet_at', '0')->get();
+        $breadcrumb = (object) [
+            'list' => ['Material Keluar', 'Tambah']
+        ];
+        return view('pages.transaksi.material-keluar.create-transaksi-material-kel',  ['data' => $this->data, 'breadcrumb' => $breadcrumb, 'materials' => $materials, 'kode' => $kode]);
     }
 
     /**
@@ -86,12 +93,12 @@ class TransaksiMaterialController extends Controller
             }
 
             DB::commit();
-            $suffixRoute = ($request->jenis == 1) ? 'pengeluaran' : 'penerimaan';
+            $suffixRoute = ($request->jenis == 1) ? 'keluars' : 'masuks';
 
             return response()->json([
                 'success'  => true,
                 'message'  => 'Data transaksi berhasil disimpan!',
-                'redirect' => route('transaksi-material-' . $suffixRoute)
+                'redirect' => route('material-' . $suffixRoute)
             ], 200);
         } catch (Exception $e) {
             DB::rollBack();
@@ -234,5 +241,25 @@ class TransaksiMaterialController extends Controller
                 'message' => 'Gagal menghapus: ' . $e->getMessage()
             ], 500);
         }
+    }
+
+    private function generateKode($jenisTransaksi)
+    {
+        $prefix = ($jenisTransaksi == 'KELUAR') ? 'TRK' : 'TRM';
+
+        $last = TransaksiMaterial::where('jenis', $jenisTransaksi)
+            ->orderBy('id', 'desc')
+            ->first();
+
+        if (!$last) {
+            $nextNumber = 1;
+        } else {
+            $lastKode = (int) substr($last->kode_transaksi, 3);
+            $nextNumber = $lastKode + 1;
+        }
+
+        $kodeBaru = $prefix . str_pad($nextNumber, 3, '0', STR_PAD_LEFT);
+
+        return $kodeBaru;
     }
 }
