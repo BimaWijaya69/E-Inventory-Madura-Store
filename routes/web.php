@@ -17,11 +17,11 @@ Route::middleware(['guest'])->group(function () {
 
 
 Route::middleware(['auth', PreventBackHistory::class])->group(function () {
+    Route::get('/material/generate-kode', [MaterialController::class, 'generateKode']);
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
     // material
     Route::get('/materials', [MaterialController::class, 'index'])->name('materials');
     Route::get('/materials/{id}', [MaterialController::class, 'edit']);
-    Route::get('/material/generate-kode', [MaterialController::class, 'generateKode']);
     Route::post('/materials', [MaterialController::class, 'store'])->name('material-post');
     Route::post('/materials/update/{id}', [MaterialController::class, 'update'])->name('material-update');
     Route::delete('/materials/delete/{id}', [MaterialController::class, 'destroy'])->name('material-delete');
@@ -32,15 +32,20 @@ Route::middleware(['auth', PreventBackHistory::class])->group(function () {
     Route::put('/transaksi/{id}', [TransaksiMaterialController::class, 'update'])->name('transaksi.update');
     Route::delete('/transaksi/{id}', [TransaksiMaterialController::class, 'destroy'])->name('transaksi.delete');
     Route::get('/transaksi/{id}/detail', [TransaksiMaterialController::class, 'detailTransaksi'])->name('transaksi.detail');
-
+    Route::get('/transaksi/{id}/confirm', [TransaksiMaterialController::class, 'confirm'])->name('transaksi.confirm');
+    Route::get('/transaksi/{id}/ajuan-kembali', [TransaksiMaterialController::class, 'ajuanKembali'])->name('transaksi.ajuan-kembali');
+    Route::post('/transaksi/{id}/decline', [TransaksiMaterialController::class, 'decline'])->name('transaksi.decline');
 
     Route::get('/material-masuk', [TransaksiMaterialController::class, 'materialMasukView'])->name('material-masuks');
     Route::get('/material-masuk/create', [TransaksiMaterialController::class, 'createMaterialMasukView'])->name('material-masuks.create');
     Route::get('/material-masuk/{id}/update', [TransaksiMaterialController::class, 'editMaterialMasukView'])->name('material-masuks.edit');
+    Route::get('/material-masuk/{id}/detail', [TransaksiMaterialController::class, 'detailTransaksi'])->name('material.detail-masuk');
+
 
     Route::get('/material-keluar', [TransaksiMaterialController::class, 'materialKeluarView'])->name('material-keluars');
     Route::get('/material-keluar/create', [TransaksiMaterialController::class, 'createMaterialKeluarView'])->name('create-material-keluars');
     Route::get('/material-keluar/{id}/update', [TransaksiMaterialController::class, 'editMaterialKeluarView'])->name('edit-material-keluars');
+    Route::get('/material-keluar/{id}/detail', [TransaksiMaterialController::class, 'detailTransaksi'])->name('material.detail-keluar');
 
     Route::get('/export-transaksi', [TransaksiMaterialController::class, 'export'])
         ->name('export.transaksi');

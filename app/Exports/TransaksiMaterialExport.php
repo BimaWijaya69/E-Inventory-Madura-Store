@@ -39,7 +39,7 @@ class TransaksiMaterialExport implements FromArray, WithHeadings
         $query = TransaksiMaterial::with(['detail_transaksi', 'verifikasi_transaksi'])
             ->where('delet_at', '0');
 
-        if ((int) $this->data->role !== 1) {
+        if ((int) $this->data->role !== '1') {
             $roleLogin = (int) $this->data->role;
 
             $query->whereHas('dibuat_oleh', function ($q) use ($roleLogin) {

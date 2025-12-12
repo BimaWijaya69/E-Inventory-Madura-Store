@@ -5,9 +5,9 @@ $(document).ready(function () {
         const id = $(this).data("id");
 
         Swal.fire({
-            title: "Invalid Data Pendaftaran",
+            title: "Material Dikembalikan",
             input: "textarea",
-            inputLabel: "Pesan Invalid Data",
+            inputLabel: "Alasan Material Dikembalikan",
             showCancelButton: true,
             cancelButtonText: "Batal",
             confirmButtonText: "Kirim",
@@ -21,7 +21,7 @@ $(document).ready(function () {
             },
             inputValidator: (value) => {
                 if (!value) {
-                    return "Pesan wajib diisi!";
+                    return "Alasan wajib diisi!";
                 }
             },
             preConfirm: (message) => {
@@ -29,7 +29,7 @@ $(document).ready(function () {
 
                 return new Promise((resolve, reject) => {
                     $.ajax({
-                        url: `/admin/${id}/decline`,
+                        url: `/transaksi/${id}/decline`,
                         method: "POST",
                         contentType: "application/json",
                         headers: {
@@ -56,7 +56,7 @@ $(document).ready(function () {
             if (result.isConfirmed) {
                 Swal.fire(
                     "Berhasil!",
-                    "Pesan telah disampaikan.",
+                    "Alasan telah disampaikan.",
                     "success"
                 ).then(() => {
                     location.reload();
@@ -72,7 +72,7 @@ $(document).ready(function () {
 
         Swal.fire({
             title: "Yakin?",
-            text: "Data dikonfirmasi!",
+            text: "Material disetujui!",
             icon: "warning",
             showCancelButton: true,
             reverseButtons: true,
@@ -91,7 +91,7 @@ $(document).ready(function () {
                 });
 
                 $.ajax({
-                    url: `/admin/${id}/confirm`,
+                    url: `/transaksi/${id}/confirm`,
                     method: "GET",
                     success: function (response) {
                         Swal.fire(
@@ -111,6 +111,31 @@ $(document).ready(function () {
                     },
                 });
             }
+        });
+    });
+
+    $(".btn-ajuan").on("click", function (e) {
+        e.preventDefault();
+        const id = $(this).data("id");
+        $.ajax({
+            url: `/transaksi/${id}/ajuan-kembali`,
+            method: "GET",
+            success: function (response) {
+                Swal.fire(
+                    "Berhasil!",
+                    "Pengajuan telah berhasil",
+                    "success"
+                ).then(() => {
+                    location.reload();
+                });
+            },
+            error: function () {
+                Swal.fire(
+                    "Gagal!",
+                    "Terjadi kesalahan pengajuan data",
+                    "error"
+                );
+            },
         });
     });
 });

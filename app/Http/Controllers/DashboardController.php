@@ -52,7 +52,7 @@ class DashboardController extends Controller
             });
 
         $disetujui = (clone $verifikasiBase)->where('status', '1')->count();
-        $dikembalikan = (clone $verifikasiBase)->where('status', '3')->count();
+        $dikembalikan = (clone $verifikasiBase)->where('status', '2')->count();
         $menunggu = (clone $verifikasiBase)->where('status', '0')->count();
 
         $transaksi = (clone $transaksiQuery)->get();

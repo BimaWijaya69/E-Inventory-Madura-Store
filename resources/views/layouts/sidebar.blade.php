@@ -6,6 +6,8 @@
         'material-masuks.edit',
         'create-material-keluars',
         'edit-material-keluars',
+        'material.detail-keluar',
+        'material.detail-masuk',
     );
 @endphp
 
@@ -17,7 +19,7 @@
                 <span>Dashboard</span>
             </a>
         </li>
-        @if ($data->role == '1')
+        @if ($data->role === '1')
             <li class="nav-item">
                 <a class="nav-link {{ request()->routeIs('materials') ? '' : 'collapsed' }}"
                     href="{{ route('materials') }}">
@@ -35,19 +37,19 @@
             </a>
             <ul id="master-nav" class="nav-content collapse {{ $isTransaksiActive ? 'show' : '' }}"
                 data-bs-parent="#sidebar-nav">
-                @if ($data->role == '1' || $data->role == '2')
+                @if (in_array($data->role, ['1', '2']))
                     <li>
                         <a href="{{ route('material-masuks') }}"
-                            class="{{ request()->routeIs('material-masuks', 'material-masuks.create', 'material-masuks.edit') ? 'active' : '' }}">
+                            class="{{ request()->routeIs('material-masuks', 'material-masuks.create', 'material-masuks.edit', 'material.detail-masuk') ? 'active' : '' }}">
                             <i class="fa-solid fa-truck nav-icon" style="font-size: 14px;"></i>
                             <span>Penerimaan Material</span>
                         </a>
                     </li>
                 @endif
-                @if ($data->role == '1' || $data->role == '3')
+                @if (in_array($data->role, ['1', '3']))
                     <li>
                         <a href="{{ route('material-keluars') }}"
-                            class="{{ request()->routeIs('material-keluars', 'create-material-keluars', 'edit-material-keluars') ? 'active' : '' }}">
+                            class="{{ request()->routeIs('material-keluars', 'create-material-keluars', 'edit-material-keluars', 'material.detail-keluar') ? 'active' : '' }}">
                             <i class="fa-solid fa-truck-ramp-box nav-icon"style="font-size: 14px;"></i>
                             <span>Pengeluaran Material</span>
                         </a>
@@ -55,7 +57,7 @@
                 @endif
             </ul>
         </li>
-        @if ($data->role == '1')
+        @if ($data->role === '1')
             <li class="nav-item">
                 <a class="nav-link {{ request()->routeIs('users') ? '' : 'collapsed' }}" href="{{ route('users') }}">
                     <i class="fa-solid fa-user-astronaut"></i>

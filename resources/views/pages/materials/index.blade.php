@@ -206,8 +206,6 @@
                     url: "/material/generate-kode",
                     method: "GET",
                     success: function(res) {
-                        console.log("kode", res.kode);
-
                         $("input[name='kode_material']").val(res.kode);
                     }
                 });

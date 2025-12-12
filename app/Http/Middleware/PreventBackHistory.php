@@ -4,7 +4,7 @@ namespace App\Http\Middleware;
 
 use Closure;
 use Illuminate\Http\Request;
-use Symfony\Component\HttpFoundation\BinaryFileResponse; // <--- PENTING: Tambahkan ini
+use Symfony\Component\HttpFoundation\Response;
 
 class PreventBackHistory
 {
@@ -15,15 +15,12 @@ class PreventBackHistory
      * @param  \Closure  $next
      * @return mixed
      */
-    public function handle(Request $request, Closure $next)
+    public function handle(Request $request, Closure $next): Response
     {
         $response = $next($request);
-        if ($response instanceof BinaryFileResponse) {
-            return $response;
-        }
-
-        return $response->header('Cache-Control', 'no-cache, no-store, must-revalidate')
-            ->header('Pragma', 'no-cache')
-            ->header('Expires', '0');
+        $response->headers->set('Cache-Control', 'no-cache, no-store, must-revalidate, max-age=0');
+        $response->headers->set('Pragma', 'no-cache');
+        $response->headers->set('Expires', 'Sat, 01 Jan 2000 00:00:00 GMT');
+        return $response;
     }
 }

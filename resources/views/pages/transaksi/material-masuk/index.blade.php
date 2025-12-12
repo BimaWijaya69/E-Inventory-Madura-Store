@@ -23,8 +23,11 @@
                                         <th>Tanggal</th>
                                         <th>Nama Penerima</th>
                                         <th>Keperluan</th>
-                                        <th>Status</th>
-                                        <th>Actions</th>
+                                        <th class="text-center">Status</th>
+                                        @if ($data->role == '1')
+                                            <th class="text-center">Verifikasi</th>
+                                        @endif
+                                        <th class="text-center">Actions</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -45,26 +48,53 @@
 
                                                     $status = $t->verifikasi_transaksi?->status;
                                                 @endphp
-                                                <td>
-                                                    <span class="badge {{ $map[$status]['class'] ?? 'text-bg-secondary' }}">
-                                                        {{ $map[$status]['text'] ?? 'Unknown' }}
-                                                    </span>
-                                                </td>
                                                 <td class="align-middle">
                                                     <div class="d-flex gap-2 justify-content-center">
-                                                        <a href="{{ route('transaksi.detail', $t->id) }}"
+                                                        <span
+                                                            class="badge {{ $map[$status]['class'] ?? 'text-bg-secondary' }}">
+                                                            {{ $map[$status]['text'] ?? 'Unknown' }}
+                                                        </span>
+                                                        @if ($t->verifikasi_transaksi?->status == 2)
+                                                            <span class="badge text-bg-secondary btn-ajuan"
+                                                                data-id="{{ $t->id }}"
+                                                                style="cursor: pointer;">Ajukan Kembali</span>
+                                                        @endif
+                                                    </div>
+                                                </td>
+                                                @if ($data->role == '1')
+                                                    <td class="align-middle">
+                                                        @if ($t->verifikasi_transaksi->status == 0)
+                                                            <div class="d-flex gap-2 justify-content-center">
+                                                                <button type="button"
+                                                                    class="btn btn-success btn-sm btn-confirm"
+                                                                    data-id="{{ $t->id }}"><i
+                                                                        class="bi bi-check-circle"></i></button>
+                                                                <button type="button"
+                                                                    class="btn btn-danger btn-sm btn-decline"
+                                                                    data-id="{{ $t->id }}"><i
+                                                                        class="bi bi-x-circle"></i></button>
+                                                            </div>
+                                                        @endif
+                                                    </td>
+                                                @endif
+                                                <td class="align-middle">
+                                                    <div class="d-flex gap-2 justify-content-center">
+                                                        <a href="{{ route('material.detail-masuk', $t->id) }}"
                                                             class="btn btn-secondary btn-sm">
                                                             <i class="bi bi-info-circle"></i>
                                                         </a>
-                                                        <a href="{{ route('material-masuks.edit', ['id' => $t->id]) }}"
-                                                            class="btn btn-info btn-sm btn-edit-material">
-                                                            <i class="bi bi-pencil"></i>
-                                                        </a>
-                                                        <button type="button" class="btn btn-danger btn-sm btn-decline"
+                                                        @if (
+                                                            ($t->verifikasi_transaksi->status == 0 && $data->role == 1) ||
+                                                                ($t->verifikasi_transaksi->status == 2 && $data->role != 1))
+                                                            <a href="{{ route('material-masuks.edit', ['id' => $t->id]) }}"
+                                                                class="btn btn-info btn-sm btn-edit-material">
+                                                                <i class="bi bi-pencil"></i>
+                                                            </a>
+                                                        @endif
+                                                        <button type="button" class="btn btn-danger btn-sm btn-hps"
                                                             data-id="{{ $t->id }}">
-                                                            <i class="bi bi-x-circle"></i>
+                                                            <i class="bi bi-trash"></i>
                                                         </button>
-
                                                     </div>
                                                 </td>
                                             </tr>
@@ -85,7 +115,7 @@
     </section>
     <script>
         $(document).ready(function() {
-            $(document).on('click', '.btn-decline', function() {
+            $(document).on('click', '.btn-hps', function() {
                 let id = $(this).data('id');
 
                 Swal.fire({

@@ -180,7 +180,7 @@ class TransaksiMaterialController extends Controller
     public function detailTransaksi($id)
     {
         $breadcrumb = (object) [
-            'list' => ['Material Masuk', 'Tambah']
+            'list' => ['Material Masuk', 'Detail']
         ];
         $transaksi = TransaksiMaterial::with([
             'detail_transaksi.material',
@@ -414,5 +414,39 @@ class TransaksiMaterialController extends Controller
                 'X-Export-By' => auth()->user()->name ?? 'system'
             ]
         );
+    }
+
+    public function confirm($id)
+    {
+        $transaksi = VerifikasiTraksaksi::where('transaksi_id', $id)->first();
+
+        if ($transaksi) {
+            $transaksi->update([
+                'status' => '1',
+                'diverifikasi_oleh' => $this->data->id
+            ]);
+        };
+        return response()->json(['success' => true]);
+    }
+
+    public function decline($id, Request $request)
+    {
+        $transaksi = VerifikasiTraksaksi::where('transaksi_id', $id)->first();
+        if ($transaksi) {
+            $transaksi->update([
+                'status' => '3',
+                'diverifikasi_oleh' => $this->data->id,
+                'alasan_pengembalian' => $request->message
+            ]);
+        }
+        return response()->json(['success' => true]);
+    }
+
+    public function ajuanKembali($id)
+    {
+        VerifikasiTraksaksi::where('transaksi_id', $id)->update([
+            'status' => '0'
+        ]);
+        return response()->json(['success' => true]);
     }
 }
