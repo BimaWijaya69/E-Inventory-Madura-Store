@@ -3,6 +3,7 @@
 namespace App\Exports;
 
 use App\Models\TransaksiMaterial;
+use Illuminate\Support\Facades\Auth;
 use Maatwebsite\Excel\Concerns\FromArray;
 use Maatwebsite\Excel\Concerns\WithHeadings;
 
@@ -10,11 +11,13 @@ class TransaksiMaterialExport implements FromArray, WithHeadings
 {
     protected $jenis;
     protected $status;
+    protected $data;
 
     public function __construct($jenis = null, $status = null)
     {
         $this->jenis = $jenis;
         $this->status = $status;
+        $this->data = Auth::user();
     }
 
     public function headings(): array
@@ -35,6 +38,14 @@ class TransaksiMaterialExport implements FromArray, WithHeadings
     {
         $query = TransaksiMaterial::with(['detail_transaksi', 'verifikasi_transaksi'])
             ->where('delet_at', '0');
+
+        if ((int) $this->data->role !== 1) {
+            $roleLogin = (int) $this->data->role;
+
+            $query->whereHas('dibuat_oleh', function ($q) use ($roleLogin) {
+                $q->where('role', $roleLogin);
+            });
+        }
 
         if ($this->jenis !== null && $this->jenis !== '') {
             $query->where('jenis', $this->jenis);

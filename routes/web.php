@@ -45,5 +45,5 @@ Route::middleware(['auth', PreventBackHistory::class])->group(function () {
     Route::get('/export-transaksi', [TransaksiMaterialController::class, 'export'])
         ->name('export.transaksi');
 
-    Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+    Route::get('/logout', [AuthController::class, 'logout'])->name('logout');
 });

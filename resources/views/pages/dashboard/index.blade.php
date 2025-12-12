@@ -7,7 +7,7 @@
 
 
             <div class="row">
-                <div class="col-xxl-4 col-md-4">
+                <div class=" col-md-8 @if ($data->role == 2 || $data->role == 3) col-xxl-8 @else col-xxl-4 @endif">
                     <div class="card info-card sales-card">
                         <div class="filter">
                             <a class="icon" href="#" data-bs-toggle="dropdown"><i class="bi bi-three-dots"></i></a>
@@ -38,70 +38,74 @@
 
                     </div>
                 </div><!-- End Sales Card -->
-                <div class="col-xxl-4 col-md-4">
-                    <div class="card info-card sales-card">
+                @if ($data->role == '2' || $data->role == '1')
+                    <div class="col-xxl-4 col-md-4">
+                        <div class="card info-card sales-card">
 
-                        <div class="filter">
-                            <a class="icon" href="#" data-bs-toggle="dropdown"><i class="bi bi-three-dots"></i></a>
-                            <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow">
-                                <li class="dropdown-header text-start">
-                                    <h6>Download</h6>
-                                </li>
+                            <div class="filter">
+                                <a class="icon" href="#" data-bs-toggle="dropdown"><i
+                                        class="bi bi-three-dots"></i></a>
+                                <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow">
+                                    <li class="dropdown-header text-start">
+                                        <h6>Download</h6>
+                                    </li>
 
-                                <li><a class="dropdown-item" href="{{ route('export.transaksi', ['jenis' => 0]) }}">Export
-                                        Exel</a></li>
-                            </ul>
-                        </div>
+                                    <li><a class="dropdown-item"
+                                            href="{{ route('export.transaksi', ['jenis' => 0]) }}">Export
+                                            Exel</a></li>
+                                </ul>
+                            </div>
+                            <div class="card-body">
+                                <h5 class="card-title">Penerimaan Material </h5>
 
-                        <div class="card-body">
-                            <h5 class="card-title">Penerimaan Material </h5>
+                                <div class="d-flex align-items-center">
+                                    <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
+                                        <i class="fa-solid fa-handshake"></i>
+                                    </div>
+                                    <div class="ps-3">
+                                        <h6>{{ $total_transaksi_pen }}</h6>
+                                        <span class="text-muted small pt-2 ps-1">transaksi</span>
 
-                            <div class="d-flex align-items-center">
-                                <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
-                                    <i class="fa-solid fa-handshake"></i>
-                                </div>
-                                <div class="ps-3">
-                                    <h6>{{ $total_transaksi_pen }}</h6>
-                                    <span class="text-muted small pt-2 ps-1">transaksi</span>
-
+                                    </div>
                                 </div>
                             </div>
                         </div>
+                    </div><!-- End Sales Card -->
+                @endif
+                @if ($data->role == '3' || $data->role == '1')
+                    <div class="col-xxl-4 col-md-4">
+                        <div class="card info-card sales-card">
 
-                    </div>
-                </div><!-- End Sales Card -->
-                <div class="col-xxl-4 col-md-4">
-                    <div class="card info-card sales-card">
+                            <div class="filter">
+                                <a class="icon" href="#" data-bs-toggle="dropdown"><i
+                                        class="bi bi-three-dots"></i></a>
+                                <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow">
+                                    <li class="dropdown-header text-start">
+                                        <h6>Download</h6>
+                                    </li>
 
-                        <div class="filter">
-                            <a class="icon" href="#" data-bs-toggle="dropdown"><i class="bi bi-three-dots"></i></a>
-                            <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow">
-                                <li class="dropdown-header text-start">
-                                    <h6>Download</h6>
-                                </li>
+                                    <li><a class="dropdown-item"
+                                            href="{{ route('export.transaksi', ['jenis' => 1]) }}">Export
+                                            Exel</a></li>
+                                </ul>
+                            </div>
+                            <div class="card-body">
+                                <h5 class="card-title">Pengeluaran Material</h5>
 
-                                <li><a class="dropdown-item" href="{{ route('export.transaksi', ['jenis' => 1]) }}">Export
-                                        Exel</a></li>
-                            </ul>
-                        </div>
+                                <div class="d-flex align-items-center">
+                                    <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
+                                        <i class="fa-solid fa-briefcase"></i>
+                                    </div>
+                                    <div class="ps-3">
+                                        <h6>{{ $total_transaksi_kel }}</h6>
+                                        <span class="text-muted small pt-2 ps-1">transaksi</span>
 
-                        <div class="card-body">
-                            <h5 class="card-title">Pengeluaran Material</h5>
-
-                            <div class="d-flex align-items-center">
-                                <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
-                                    <i class="fa-solid fa-briefcase"></i>
-                                </div>
-                                <div class="ps-3">
-                                    <h6>{{ $total_transaksi_kel }}</h6>
-                                    <span class="text-muted small pt-2 ps-1">transaksi</span>
-
+                                    </div>
                                 </div>
                             </div>
                         </div>
-
-                    </div>
-                </div><!-- End Sales Card -->
+                    </div><!-- End Sales Card -->
+                @endif
                 <div class="col-xxl-4 col-md-4">
                     <div class="card info-card sales-card">
 

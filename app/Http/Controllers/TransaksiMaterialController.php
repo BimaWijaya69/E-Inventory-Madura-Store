@@ -22,22 +22,54 @@ class TransaksiMaterialController extends Controller
         $this->data = Auth::user();
     }
 
+    private function transaksiQuery()
+    {
+        $transaksiQuery = TransaksiMaterial::with(['dibuat_oleh', 'detail_transaksi', 'verifikasi_transaksi'])
+            ->where('delet_at', '0');
+
+        if ((int) $this->data->role !== 1) {
+            $roleLogin = (int) $this->data->role;
+
+            $transaksiQuery->whereHas('dibuat_oleh', function ($q) use ($roleLogin) {
+                $q->where('role', $roleLogin);
+            });
+        }
+
+        return $transaksiQuery;
+    }
+
     public function materialMasukView()
     {
-        $transaksis = TransaksiMaterial::with(['dibuat_oleh', 'detail_transaksi', 'verifikasi_transaksi'])->where('jenis', '0')->get();
+        $transaksis = $this->transaksiQuery()
+            ->where('jenis', '0')
+            ->get();
+
         $breadcrumb = (object) [
             'list' => ['Materaial Masuk', '']
         ];
-        return view('pages.transaksi.material-masuk.index',  ['data' => $this->data, 'breadcrumb' => $breadcrumb, 'transaksis' => $transaksis]);
+
+        return view('pages.transaksi.material-masuk.index', [
+            'data' => $this->data,
+            'breadcrumb' => $breadcrumb,
+            'transaksis' => $transaksis
+        ]);
     }
 
     public function materialKeluarView()
     {
-        $transaksis = TransaksiMaterial::with(['dibuat_oleh', 'detail_transaksi', 'verifikasi_transaksi'])->where('jenis', '1')->get();
+        $transaksis = $this->transaksiQuery()
+            ->where('jenis', '1')
+            ->get();
+
         $breadcrumb = (object) [
             'list' => ['Material Keluar', '']
         ];
-        return view('pages.transaksi.material-keluar.index',  ['data' => $this->data, 'breadcrumb' => $breadcrumb, 'transaksis' => $transaksis]);
+
+        return view('pages.transaksi.material-keluar.index', [
+            'data' => $this->data,
+            'breadcrumb' => $breadcrumb,
+            'transaksis' => $transaksis
+        ]);
     }
 
     public function createMaterialMasukView()
