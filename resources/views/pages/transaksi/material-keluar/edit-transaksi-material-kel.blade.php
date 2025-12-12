@@ -81,8 +81,8 @@
                                 <div class="col-12">
                                     <div class="d-flex justify-content-between align-items-center mb-3">
                                         <h6 class="mb-0">Material yang Dikeluarkan</h6>
-                                        <button type="button" class="btn btn-success btn-sm" id="btn-add-material">
-                                            <i class="bi bi-plus-circle"></i> Tambah Material
+                                        <button type="button" class="btn btn-primary btn-sm" id="btn-add-material">
+                                            <i class="bi bi-plus-lg me-1"></i> Tambah Material
                                         </button>
                                     </div>
 

@@ -16,7 +16,7 @@
                                     <h6>Download</h6>
                                 </li>
 
-                                <li><a class="dropdown-item" href="">Export
+                                <li><a class="dropdown-item" href="{{ route('export.transaksi') }}">Export
                                         Exel</a></li>
                             </ul>
                         </div>
@@ -29,7 +29,7 @@
                                     <i class="fa-solid fa-location-dot"></i>
                                 </div>
                                 <div class="ps-3">
-                                    <h6>4</h6>
+                                    <h6>{{ $total_transaksi }}</h6>
                                     <span class="text-muted small pt-2 ps-1">transaksi</span>
                                 </div>
                             </div>
@@ -48,19 +48,20 @@
                                     <h6>Download</h6>
                                 </li>
 
-                                <li><a class="dropdown-item" href="">Export Exel</a></li>
+                                <li><a class="dropdown-item" href="{{ route('export.transaksi', ['jenis' => 0]) }}">Export
+                                        Exel</a></li>
                             </ul>
                         </div>
 
                         <div class="card-body">
-                            <h5 class="card-title">Pengeluaran Material </h5>
+                            <h5 class="card-title">Penerimaan Material </h5>
 
                             <div class="d-flex align-items-center">
                                 <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
                                     <i class="fa-solid fa-handshake"></i>
                                 </div>
                                 <div class="ps-3">
-                                    <h6>7</h6>
+                                    <h6>{{ $total_transaksi_pen }}</h6>
                                     <span class="text-muted small pt-2 ps-1">transaksi</span>
 
                                 </div>
@@ -79,7 +80,7 @@
                                     <h6>Download</h6>
                                 </li>
 
-                                <li><a class="dropdown-item" href="">Export
+                                <li><a class="dropdown-item" href="{{ route('export.transaksi', ['jenis' => 1]) }}">Export
                                         Exel</a></li>
                             </ul>
                         </div>
@@ -92,7 +93,7 @@
                                     <i class="fa-solid fa-briefcase"></i>
                                 </div>
                                 <div class="ps-3">
-                                    <h6>4</h6>
+                                    <h6>{{ $total_transaksi_kel }}</h6>
                                     <span class="text-muted small pt-2 ps-1">transaksi</span>
 
                                 </div>
@@ -111,7 +112,8 @@
                                     <h6>Download</h6>
                                 </li>
 
-                                <li><a class="dropdown-item" href="">Export Exel</a></li>
+                                <li><a class="dropdown-item" href="{{ route('export.transaksi', ['status' => 1]) }}">Export
+                                        Exel</a></li>
                             </ul>
                         </div>
 
@@ -123,7 +125,7 @@
                                     <i class="fa-solid fa-trophy"></i>
                                 </div>
                                 <div class="ps-3">
-                                    <h6></h6>
+                                    <h6>{{ $disetujui }}</h6>
                                     <span class="text-muted small pt-2 ps-1">transaksi</span>
 
                                 </div>
@@ -142,7 +144,8 @@
                                     <h6>Download</h6>
                                 </li>
 
-                                <li><a class="dropdown-item" href="">Export Exel</a>
+                                <li><a class="dropdown-item" href="{{ route('export.transaksi', ['status' => 3]) }}">Export
+                                        Exel</a>
                                 </li>
                             </ul>
                         </div>
@@ -156,7 +159,7 @@
 
                                 </div>
                                 <div class="ps-3">
-                                    <h6></h6>
+                                    <h6>{{ $dikembalikan }}</h6>
                                     <span class="text-muted small pt-2 ps-1">transaksi</span>
 
                                 </div>
@@ -175,7 +178,8 @@
                                     <h6>Download</h6>
                                 </li>
 
-                                <li><a class="dropdown-item" href="">Export Exel</a></li>
+                                <li><a class="dropdown-item"
+                                        href="{{ route('export.transaksi', ['status' => 0]) }}">Export Exel</a></li>
                             </ul>
                         </div>
 
@@ -187,7 +191,7 @@
                                     <i class="fa-solid fa-medal"></i>
                                 </div>
                                 <div class="ps-3">
-                                    <h6>0</h6>
+                                    <h6>{{ $menunggu }}</h6>
                                     <span class="text-muted small pt-2 ps-1">transaksi</span>
 
                                 </div>
@@ -206,7 +210,7 @@
             </div>
         </div>
     </section>
-    {{-- <script>
+    <script>
         document.addEventListener("DOMContentLoaded", () => {
             const labels = @json($labelsMingguan);
             const series = @json($seriesChart);
@@ -261,11 +265,11 @@
                 tooltip: {
                     y: {
                         formatter: function(val) {
-                            return val + " pendaftar";
+                            return val + " transaksi";
                         }
                     }
                 }
             }).render();
         });
-    </script> --}}
+    </script>
 @endsection

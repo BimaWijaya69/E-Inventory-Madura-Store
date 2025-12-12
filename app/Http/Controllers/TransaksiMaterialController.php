@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Exports\TransaksiMaterialExport;
 use App\Models\DetailTransaksiMaterial;
 use App\Models\Material;
 use App\Models\TransaksiMaterial;
@@ -11,6 +12,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
+use Maatwebsite\Excel\Facades\Excel;
 
 class TransaksiMaterialController extends Controller
 {
@@ -45,7 +47,7 @@ class TransaksiMaterialController extends Controller
         $breadcrumb = (object) [
             'list' => ['Material Masuk', 'Tambah']
         ];
-        return view('pages.transaksi.material-masuk.form-penerimaan',  ['data' => $this->data, 'breadcrumb' => $breadcrumb, 'materials' => $materials, 'kode' => $kode]);
+        return view('pages.transaksi.material-masuk.create-transaksi-material-pen',  ['data' => $this->data, 'breadcrumb' => $breadcrumb, 'materials' => $materials, 'kode' => $kode]);
     }
 
     /**
@@ -172,7 +174,7 @@ class TransaksiMaterialController extends Controller
         $materials = Material::where('delet_at', '0')->get();
         $data = $this->data;
         $t = TransaksiMaterial::with(['dibuat_oleh', 'detail_transaksi', 'verifikasi_transaksi'])->where('id', $id)->firstOrFail();
-        return view('pages.transaksi.material-masuk.edit-penerimaan', compact('t', 'breadcrumb', 'materials', 'data'));
+        return view('pages.transaksi.material-masuk.edit-transaksi-material-pen', compact('t', 'breadcrumb', 'materials', 'data'));
     }
 
     public function editMaterialKeluarView(string $id)
@@ -339,5 +341,46 @@ class TransaksiMaterialController extends Controller
         $kodeBaru = $prefix . str_pad($nextNumber, 3, '0', STR_PAD_LEFT);
 
         return $kodeBaru;
+    }
+
+    public function export(Request $request)
+    {
+        $jenis = $request->jenis;
+        $status = $request->status;
+        $nameParts = ['transaksi_material'];
+        $hasFilter = false;
+        if ($jenis !== null && $jenis !== '') {
+            $nameParts[] = $jenis == '0' ? 'penerimaan' : 'pengeluaran';
+            $hasFilter = true;
+        }
+
+        if ($status !== null && $status !== '') {
+            switch ($status) {
+                case '0':
+                    $nameParts[] = 'menunggu';
+                    break;
+                case '1':
+                    $nameParts[] = 'disetujui';
+                    break;
+                case '3':
+                    $nameParts[] = 'dikembalikan';
+                    break;
+            }
+            $hasFilter = true;
+        }
+        if (!$hasFilter) {
+            $nameParts[] = 'semua';
+        }
+
+        $fileName = implode('_', $nameParts) . '.xlsx';
+
+        return Excel::download(
+            new TransaksiMaterialExport($jenis, $status),
+            $fileName,
+            \Maatwebsite\Excel\Excel::XLSX,
+            [
+                'X-Export-By' => auth()->user()->name ?? 'system'
+            ]
+        );
     }
 }
