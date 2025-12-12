@@ -52,7 +52,8 @@
                                                 </td>
                                                 <td class="align-middle">
                                                     <div class="d-flex gap-2 justify-content-center">
-                                                        <a href="#" class="btn btn-secondary btn-sm">
+                                                        <a href="{{ route('transaksi.detail', $t->id) }}"
+                                                            class="btn btn-secondary btn-sm">
                                                             <i class="bi bi-info-circle"></i>
                                                         </a>
                                                         <a href="{{ route('material-masuks.edit', ['id' => $t->id]) }}"
