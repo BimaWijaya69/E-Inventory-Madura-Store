@@ -14,9 +14,9 @@
                             <h5 class="card-title mb-1">
                                 Detail Transaksi
                                 @if ($transaksi->jenis == 0)
-                                    <span class="badge bg-success ms-2">Penerimaan</span>
+                                    <span class="badge text-bg-success ms-2">Penerimaan</span>
                                 @else
-                                    <span class="badge bg-danger ms-2">Pengeluaran</span>
+                                    <span class="badge text-bg-danger ms-2">Pengeluaran</span>
                                 @endif
                             </h5>
                             <p class="text-muted mb-0 small">

@@ -171,6 +171,7 @@
     <script>
         $(document).ready(function() {
 
+
             $('#upload-bukti-penerimaan').on('click', function() {
                 $('#foto-bukti-penerimaan').click();
             });
@@ -181,32 +182,36 @@
                 const icon = $('.icon-upload-penerimaan');
                 const text = $('.text-upload-text');
 
+                // reset kalau batal pilih
                 if (!file) {
-                    preview.hide();
+                    preview.hide().attr('src', '');
                     icon.show();
                     text.text('Klik untuk upload foto');
                     return;
                 }
 
+                // validasi type
                 if (!file.type.match('image.*')) {
                     Swal.fire('Oops!', 'Hanya file gambar (PNG/JPG/JPEG) yang diizinkan!', 'error');
                     $(this).val('');
-                    preview.hide();
+                    preview.hide().attr('src', '');
                     icon.show();
                     text.text('Klik untuk upload foto');
                     return;
                 }
 
-                const maxSize = 5 * 1024 * 1024; // 5MB
+                // validasi size 5MB
+                const maxSize = 5 * 1024 * 1024;
                 if (file.size > maxSize) {
                     Swal.fire('Oops!', 'Ukuran maksimal 5MB!', 'error');
                     $(this).val('');
-                    preview.hide();
+                    preview.hide().attr('src', '');
                     icon.show();
                     text.text('Klik untuk upload foto');
                     return;
                 }
 
+                // preview
                 const reader = new FileReader();
                 reader.onload = function(ev) {
                     preview.attr('src', ev.target.result).show();
@@ -216,132 +221,111 @@
                 reader.readAsDataURL(file);
             });
 
+
             // =======================
-            //  TAMBAH / HAPUS ROW MATERIAL
+            // TAMBAH / HAPUS ROW MATERIAL
             // =======================
             let rowIndex = 1;
 
             function updateRemoveButtons() {
-                const count = $(".material-row").length;
-                $(".btn-remove-row").prop("disabled", count === 1);
+                const count = $('.material-row').length;
+                $('.btn-remove-row').prop('disabled', count === 1);
             }
+            updateRemoveButtons();
 
-            $("#btn-add-material").on("click", function() {
+            $('#btn-add-material').on('click', function() {
                 const newRow = `
-            <tr class="material-row">
-                <td>
-                    <select class="form-select material-select" name="materials[${rowIndex}][id]" data-index="${rowIndex}" required>
-                        <option value="">Pilih Material</option>
-                        @foreach ($materials as $m)
-                            <option value="{{ $m->id }}"
-                                data-satuan="{{ $m->satuan }}"
-                                data-stok="{{ $m->stok }}"
-                                data-min-stok="{{ $m->min_stok }}">
-                                {{ $m->nama_material }} - Stok: {{ $m->stok }}
+                    <tr class="material-row">
+                        <td>
+                        <select class="form-select material-select" name="materials[${rowIndex}][id]" data-index="${rowIndex}" required>
+                            <option value="">Pilih Material</option>
+                            @foreach ($materials as $m)
+                            <option value="{{ $m->id }}" data-satuan="{{ $m->satuan }}">
+                                {{ $m->nama_material }}
                             </option>
-                        @endforeach
-                    </select>
-                </td>
+                            @endforeach
+                        </select>
+                        </td>
+                        <td>
+                        <input type="number" class="form-control jumlah-input" name="materials[${rowIndex}][jumlah]" min="1" required>
+                        </td>
+                        <td>
+                        <input type="text" class="form-control satuan-display" name="materials[${rowIndex}][satuan]" readonly>
+                        </td>
+                        <td>
+                        <button type="button" class="btn btn-danger btn-sm btn-remove-row">
+                            <i class="bi bi-trash"></i>
+                        </button>
+                        </td>
+                    </tr>
+                    `;
 
-                <td>
-                    <input type="number" class="form-control jumlah-input"
-                        name="materials[${rowIndex}][jumlah]" min="1" required>
-                    <small class="text-danger min-stok-warning" style="display:none;"></small>
-                </td>
-
-                <td>
-                    <input type="text" class="form-control satuan-display" readonly>
-                </td>
-
-                <td>
-                    <button type="button" class="btn btn-danger btn-sm btn-remove-row">
-                        <i class="bi bi-trash"></i>
-                    </button>
-                </td>
-            </tr>
-        `;
-
-                $("#material-rows").append(newRow);
+                $('#material-rows').append(newRow);
                 rowIndex++;
                 updateRemoveButtons();
             });
 
-            $(document).on("click", ".btn-remove-row", function() {
-                $(this).closest(".material-row").remove();
+            $(document).on('click', '.btn-remove-row', function() {
+                $(this).closest('.material-row').remove();
                 updateRemoveButtons();
             });
 
+            // isi satuan saat pilih material
+            $(document).on('change', '.material-select', function() {
+                const opt = $(this).find('option:selected');
+                const satuan = opt.data('satuan') || '';
+                const row = $(this).closest('tr');
 
-            $(document).on("change", ".material-select", function() {
-                const opt = $(this).find("option:selected");
-                const satuan = opt.data("satuan");
-                const stok = opt.data("stok");
-                const minStok = opt.data("min-stok");
-
-                const row = $(this).closest("tr");
-
-                row.find(".satuan-display").val(satuan || "");
-                const jumlah = row.find(".jumlah-input");
-
-                jumlah.attr("max", stok).attr("data-min-stok", minStok);
-                jumlah.val("");
-
-                row.find(".min-stok-warning").hide().text("");
+                row.find('.satuan-display').val(satuan);
+                row.find('.jumlah-input').val('');
             });
 
-            // =======================
-            //  VALIDASI JUMLAH MATERIAL
-            // =======================
-            $(document).on("input", ".jumlah-input", function() {
-                const jumlah = parseInt($(this).val());
-                const max = parseInt($(this).attr("max"));
-                const minStok = parseInt($(this).attr("data-min-stok"));
-
-                const row = $(this).closest("tr");
-                const warning = row.find(".min-stok-warning");
-
-                if (max && jumlah > max) {
-                    Swal.fire("Peringatan", "Jumlah melebihi stok tersedia (" + max + ")", "warning");
-                    $(this).val(max);
-                }
-
-                if (minStok && jumlah) {
-                    const sisa = max - jumlah;
-                    if (sisa < minStok) {
-                        warning
-                            .text("Sisa stok " + sisa + " lebih kecil dari minimal stok " + minStok)
-                            .show();
-                        $(this).addClass("border-danger");
-                    } else {
-                        warning.hide();
-                        $(this).removeClass("border-danger");
-                    }
-                }
-            });
 
             // =======================
-            //  SUBMIT FORM VIA AJAX
+            // SUBMIT FORM VIA AJAX (PENERIMAAN)
             // =======================
-            $("#form-penerimaan").on("submit", function(e) {
+            $('#form-penerimaan').on('submit', function(e) {
                 e.preventDefault();
 
                 const tanggal = $("input[name='tanggal']").val().trim();
                 const nama = $("input[name='nama_pihak_transaksi']").val().trim();
                 const keperluan = $("select[name='keperluan']").val();
-                const foto = $("#foto_bukti").val();
 
-                // FRONT VALIDATION
+                // FIX: selector file yang benar
+                const foto = $("#foto-bukti-penerimaan").val();
+
                 if (!tanggal) return Swal.fire("Oops!", "Tanggal wajib diisi!", "error");
                 if (!nama) return Swal.fire("Oops!", "Nama penerima wajib diisi!", "error");
                 if (!keperluan) return Swal.fire("Oops!", "Keperluan wajib dipilih!", "error");
                 if (!foto) return Swal.fire("Oops!", "Upload bukti foto wajib!", "error");
 
-                let hasMaterial = false;
-                $(".material-select").each(function() {
-                    if ($(this).val()) hasMaterial = true;
+                // validasi material: minimal 1 baris valid & setiap baris harus lengkap
+                let anyMaterial = false;
+                let allRowsValid = true;
+
+                $(".material-row").each(function() {
+                    const materialId = $(this).find(".material-select").val();
+                    const jumlahVal = $(this).find(".jumlah-input").val();
+
+                    if (materialId) anyMaterial = true;
+
+                    // jika material dipilih maka jumlah wajib > 0
+                    if (materialId && (!jumlahVal || parseInt(jumlahVal) <= 0)) {
+                        allRowsValid = false;
+                        return false;
+                    }
+
+                    // kalau jumlah diisi tapi material kosong (invalid)
+                    if (!materialId && jumlahVal) {
+                        allRowsValid = false;
+                        return false;
+                    }
                 });
-                if (!hasMaterial) return Swal.fire("Oops!", "Minimal satu material harus dipilih!",
+
+                if (!anyMaterial) return Swal.fire("Oops!", "Minimal satu material harus dipilih!",
                     "error");
+                if (!allRowsValid) return Swal.fire("Oops!",
+                    "Pastikan material & jumlah pada setiap baris terisi benar!", "error");
 
                 const formData = new FormData(this);
 
@@ -351,7 +335,6 @@
                     data: formData,
                     processData: false,
                     contentType: false,
-
                     beforeSend() {
                         Swal.fire({
                             title: "Menyimpan...",
@@ -360,23 +343,20 @@
                             didOpen: () => Swal.showLoading()
                         });
                     },
-
                     success(response) {
-                        Swal.fire("Berhasil!", "Penerimaan material disimpan!", "success")
+                        Swal.fire("Berhasil!", "Penerimaan material berhasil disimpan!", "success")
                             .then(() => {
                                 window.location.href = response.redirect ||
                                     "{{ route('material-masuks') }}";
                             });
                     },
-
                     error(xhr) {
                         let msg = "Terjadi kesalahan.";
-
-                        if (xhr.status === 422) {
-                            const errors = xhr.responseJSON.errors;
-                            msg = Object.values(errors)[0][0];
+                        if (xhr.status === 422 && xhr.responseJSON?.errors) {
+                            msg = Object.values(xhr.responseJSON.errors)[0][0];
+                        } else if (xhr.responseJSON?.message) {
+                            msg = xhr.responseJSON.message;
                         }
-
                         Swal.fire("Error", msg, "error");
                     }
                 });
