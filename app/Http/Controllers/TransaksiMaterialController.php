@@ -143,9 +143,22 @@ class TransaksiMaterialController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function detailTransaksi($id)
     {
-        //
+        $breadcrumb = (object) [
+            'list' => ['Material Masuk', 'Tambah']
+        ];
+        $transaksi = TransaksiMaterial::with([
+            'detail_transaksi.material',
+            'dibuat_oleh',
+            'verifikasi_transaksi',
+        ])->findOrFail($id);
+
+        return view('pages.transaksi.detail-transaksi.detail', [
+            'data' => $this->data,
+            'breadcrumb' => $breadcrumb,
+            'transaksi' => $transaksi,
+        ]);
     }
 
     /**

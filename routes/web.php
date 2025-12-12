@@ -30,6 +30,8 @@ Route::middleware(['auth', PreventBackHistory::class])->group(function () {
     Route::post('/transaksi', [TransaksiMaterialController::class, 'store'])->name('transaksi');
     Route::put('/transaksi/{id}', [TransaksiMaterialController::class, 'update'])->name('transaksi.update');
     Route::delete('/transaksi/{id}', [TransaksiMaterialController::class, 'destroy'])->name('transaksi.delete');
+    Route::get('/transaksi/{id}/detail', [TransaksiMaterialController::class, 'detailTransaksi'])->name('transaksi.detail');
+
 
     Route::get('/material-masuk', [TransaksiMaterialController::class, 'materialMasukView'])->name('material-masuks');
     Route::get('/material-masuk/create', [TransaksiMaterialController::class, 'createMaterialMasukView'])->name('material-masuks.create');
