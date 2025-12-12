@@ -1,5 +1,6 @@
 <?php
 
+use App\Exports\TransaksiMaterialExport;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\MaterialController;
@@ -7,7 +8,7 @@ use App\Http\Controllers\TransaksiMaterialController;
 use App\Http\Controllers\UserController;
 use App\Http\Middleware\PreventBackHistory;
 use Illuminate\Support\Facades\Route;
-
+use Maatwebsite\Excel\Facades\Excel;
 
 Route::middleware(['guest'])->group(function () {
     Route::get('/', [AuthController::class, 'loginView'])->name('login');
@@ -38,5 +39,9 @@ Route::middleware(['auth', PreventBackHistory::class])->group(function () {
     Route::get('/material-keluar', [TransaksiMaterialController::class, 'materialKeluarView'])->name('material-keluars');
     Route::get('/material-keluar/create', [TransaksiMaterialController::class, 'createMaterialKeluarView'])->name('create-material-keluars');
     Route::get('/material-keluar/{id}/update', [TransaksiMaterialController::class, 'editMaterialKeluarView'])->name('edit-material-keluars');
+
+    Route::get('/export-transaksi', [TransaksiMaterialController::class, 'export'])
+        ->name('export.transaksi');
+
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 });

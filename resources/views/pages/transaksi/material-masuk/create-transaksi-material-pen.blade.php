@@ -27,14 +27,6 @@
                                     value="{{ $kode }}" readonly>
                             </div>
                         </div>
-                        <div class="col-md-6">
-                            <div class="mb-3">
-                                <label for="exampleInputKode" class="form-label">Jenis Transaksi</label>
-                                <input type="text" class="form-control" id="exampleInputKode" value="Penerimaan"
-                                    readonly>
-                            </div>
-                        </div>
-
                         <div class="col-md-6 mb-3 mb-md-0">
                             <label for="exampleInputTanggal" class="form-label">Tanggal Penerimaan<span
                                     class="text-danger">*</span></label>
@@ -49,10 +41,7 @@
                                 placeholder="Masukkan nama penerima" id="exampleInputPenerima">
                             <div class="invalid-feedback"></div>
                         </div>
-                    </div>
 
-                    {{-- KEPERLUAN --}}
-                    <div class="row mb-4">
                         <div class="col-md-6">
                             <label for="exampleInputKeperluan" class="form-label">Keperluan <span
                                     class="text-danger">*</span></label>
@@ -158,7 +147,7 @@
                             Batal
                         </a>
                         <button type="submit" class="btn btn-primary" id="btn-submit">
-                            <i class="bi bi-save me-1"></i> Simpan Penerimaan
+                            Simpan Penerimaan
                         </button>
                     </div>
 

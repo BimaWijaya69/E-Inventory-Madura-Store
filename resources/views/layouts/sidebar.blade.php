@@ -1,5 +1,12 @@
 @php
-    $isTransaksiActive = request()->routeIs('material-masuks', 'material-keluars');
+    $isTransaksiActive = request()->routeIs(
+        'material-masuks',
+        'material-keluars',
+        'material-masuks.create',
+        'material-masuks.edit',
+        'create-material-keluars',
+        'edit-material-keluars',
+    );
 @endphp
 
 <aside id="sidebar" class="sidebar">
@@ -18,14 +25,6 @@
                 <span>Material</span>
             </a>
         </li>
-
-        <li class="nav-item">
-            <a class="nav-link {{ request()->routeIs('users') ? '' : 'collapsed' }}" href="{{ route('users') }}">
-                <i class="fa-solid fa-user-astronaut"></i>
-                <span>Manajemen User</span>
-            </a>
-        </li>
-
         {{-- Transaksi --}}
         <li class="nav-item">
             <a class="nav-link collapsed" data-bs-target="#master-nav" data-bs-toggle="collapse" href="#">
@@ -40,7 +39,7 @@
 
                 <li>
                     <a href="{{ route('material-masuks') }}"
-                        class="{{ request()->routeIs('material-masuks') ? 'active' : '' }}">
+                        class="{{ request()->routeIs('material-masuks', 'material-masuks.create', 'material-masuks.edit') ? 'active' : '' }}">
                         <i class="fa-solid fa-truck nav-icon" style="font-size: 14px;"></i>
                         <span>Penerimaan Material</span>
                     </a>
@@ -48,13 +47,19 @@
 
                 <li>
                     <a href="{{ route('material-keluars') }}"
-                        class="{{ request()->routeIs('material-keluars') ? 'active' : '' }}">
+                        class="{{ request()->routeIs('material-keluars', 'create-material-keluars', 'edit-material-keluars') ? 'active' : '' }}">
                         <i class="fa-solid fa-truck-ramp-box nav-icon"style="font-size: 14px;"></i>
                         <span>Pengeluaran Material</span>
                     </a>
                 </li>
 
             </ul>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link {{ request()->routeIs('users') ? '' : 'collapsed' }}" href="{{ route('users') }}">
+                <i class="fa-solid fa-user-astronaut"></i>
+                <span>Manajemen User</span>
+            </a>
         </li>
 
     </ul>
