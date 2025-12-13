@@ -16,22 +16,37 @@ use Maatwebsite\Excel\Facades\Excel;
 
 class TransaksiMaterialController extends Controller
 {
-    protected $data;
-    public function __construct()
+    protected $data, $sort;
+    public function __construct(Request $request)
     {
         $this->data = Auth::user();
+        $this->sort = $request->input('sort');
     }
 
     private function transaksiQuery()
     {
-        $transaksiQuery = TransaksiMaterial::with(['dibuat_oleh', 'detail_transaksi', 'verifikasi_transaksi'])
+        $transaksiQuery = TransaksiMaterial::with(['pembuat', 'detail_transaksi', 'verifikasi_transaksi'])
             ->where('delet_at', '0');
 
         if ((int) $this->data->role !== 1) {
             $roleLogin = (int) $this->data->role;
 
-            $transaksiQuery->whereHas('dibuat_oleh', function ($q) use ($roleLogin) {
+            $transaksiQuery->whereHas('pembuat', function ($q) use ($roleLogin) {
                 $q->where('role', $roleLogin);
+            });
+        }
+
+        if ($this->sort == 'menunggu') {
+            $transaksiQuery->whereHas('verifikasi_transaksi', function ($q) {
+                $q->where('status', '0');
+            });
+        } else if ($this->sort == 'disetujui') {
+            $transaksiQuery->whereHas('verifikasi_transaksi', function ($q) {
+                $q->where('status', '1');
+            });
+        } else if ($this->sort == 'dikembalikan') {
+            $transaksiQuery->whereHas('verifikasi_transaksi', function ($q) {
+                $q->where('status', '2');
             });
         }
 
@@ -45,13 +60,14 @@ class TransaksiMaterialController extends Controller
             ->get();
 
         $breadcrumb = (object) [
-            'list' => ['Materaial Masuk', '']
+            'list' => ['Penerimaan Material', '']
         ];
 
         return view('pages.transaksi.material-masuk.index', [
             'data' => $this->data,
             'breadcrumb' => $breadcrumb,
-            'transaksis' => $transaksis
+            'transaksis' => $transaksis,
+            'sort' => $this->sort,
         ]);
     }
 
@@ -62,13 +78,14 @@ class TransaksiMaterialController extends Controller
             ->get();
 
         $breadcrumb = (object) [
-            'list' => ['Material Keluar', '']
+            'list' => ['Pengeluaran Material', '']
         ];
 
         return view('pages.transaksi.material-keluar.index', [
             'data' => $this->data,
             'breadcrumb' => $breadcrumb,
-            'transaksis' => $transaksis
+            'transaksis' => $transaksis,
+            'sort' => $this->sort,
         ]);
     }
 
@@ -109,7 +126,7 @@ class TransaksiMaterialController extends Controller
                 'nama_pihak_transaksi' => $request->nama_pihak_transaksi,
                 'keperluan'            => $request->keperluan,
                 'nomor_pelanggan'      => $request->nomor_pelanggan,
-                'dibuat_oleh'          => Auth::id(),
+                'pembuat'          => Auth::id(),
             ];
 
             if ($request->hasFile('foto_bukti')) {
@@ -184,7 +201,7 @@ class TransaksiMaterialController extends Controller
         ];
         $transaksi = TransaksiMaterial::with([
             'detail_transaksi.material',
-            'dibuat_oleh',
+            'pembuat',
             'verifikasi_transaksi',
         ])->findOrFail($id);
 
@@ -205,7 +222,7 @@ class TransaksiMaterialController extends Controller
         ];
         $materials = Material::where('delet_at', '0')->get();
         $data = $this->data;
-        $t = TransaksiMaterial::with(['dibuat_oleh', 'detail_transaksi', 'verifikasi_transaksi'])->where('id', $id)->firstOrFail();
+        $t = TransaksiMaterial::with(['pembuat', 'detail_transaksi', 'verifikasi_transaksi'])->where('id', $id)->firstOrFail();
         return view('pages.transaksi.material-masuk.edit-transaksi-material-pen', compact('t', 'breadcrumb', 'materials', 'data'));
     }
 
@@ -216,7 +233,7 @@ class TransaksiMaterialController extends Controller
         ];
         $materials = Material::where('delet_at', '0')->get();
         $data = $this->data;
-        $t = TransaksiMaterial::with(['dibuat_oleh', 'detail_transaksi', 'verifikasi_transaksi'])->where('id', $id)->firstOrFail();
+        $t = TransaksiMaterial::with(['pembuat', 'detail_transaksi', 'verifikasi_transaksi'])->where('id', $id)->firstOrFail();
         return view('pages.transaksi.material-keluar.edit-transaksi-material-kel', compact('t', 'breadcrumb', 'materials', 'data'));
     }
 
@@ -448,5 +465,19 @@ class TransaksiMaterialController extends Controller
             'status' => '0'
         ]);
         return response()->json(['success' => true]);
+    }
+
+    public function print($id)
+    {
+        $transaksi = TransaksiMaterial::with([
+            'detail_transaksi.material',
+            'pembuat',
+            'verifikasi_transaksi',
+        ])->findOrFail($id);
+
+        return view('pages.transaksi.cetak-transaksi.index', [
+            'data' => $this->data,
+            'transaksi' => $transaksi,
+        ]);
     }
 }

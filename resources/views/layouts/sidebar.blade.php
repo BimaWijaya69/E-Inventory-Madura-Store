@@ -61,7 +61,7 @@
             <li class="nav-item">
                 <a class="nav-link {{ request()->routeIs('users') ? '' : 'collapsed' }}" href="{{ route('users') }}">
                     <i class="fa-solid fa-user-astronaut"></i>
-                    <span>Manajemen User</span>
+                    <span>Manajemen Pengguna</span>
                 </a>
             </li>
         @endif

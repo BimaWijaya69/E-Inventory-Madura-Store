@@ -171,7 +171,6 @@
                 const icon = $('.icon-upload-penerimaan');
                 const text = $('.text-upload-text');
 
-                // reset kalau batal pilih
                 if (!file) {
                     preview.hide().attr('src', '');
                     icon.show();
@@ -179,7 +178,6 @@
                     return;
                 }
 
-                // validasi type
                 if (!file.type.match('image.*')) {
                     Swal.fire('Oops!', 'Hanya file gambar (PNG/JPG/JPEG) yang diizinkan!', 'error');
                     $(this).val('');
@@ -189,7 +187,6 @@
                     return;
                 }
 
-                // validasi size 5MB
                 const maxSize = 5 * 1024 * 1024;
                 if (file.size > maxSize) {
                     Swal.fire('Oops!', 'Ukuran maksimal 5MB!', 'error');
@@ -200,7 +197,6 @@
                     return;
                 }
 
-                // preview
                 const reader = new FileReader();
                 reader.onload = function(ev) {
                     preview.attr('src', ev.target.result).show();
@@ -210,10 +206,6 @@
                 reader.readAsDataURL(file);
             });
 
-
-            // =======================
-            // TAMBAH / HAPUS ROW MATERIAL
-            // =======================
             let rowIndex = 1;
 
             function updateRemoveButtons() {
@@ -259,7 +251,6 @@
                 updateRemoveButtons();
             });
 
-            // isi satuan saat pilih material
             $(document).on('change', '.material-select', function() {
                 const opt = $(this).find('option:selected');
                 const satuan = opt.data('satuan') || '';
@@ -270,9 +261,6 @@
             });
 
 
-            // =======================
-            // SUBMIT FORM VIA AJAX (PENERIMAAN)
-            // =======================
             $('#form-penerimaan').on('submit', function(e) {
                 e.preventDefault();
 
@@ -280,7 +268,6 @@
                 const nama = $("input[name='nama_pihak_transaksi']").val().trim();
                 const keperluan = $("select[name='keperluan']").val();
 
-                // FIX: selector file yang benar
                 const foto = $("#foto-bukti-penerimaan").val();
 
                 if (!tanggal) return Swal.fire("Oops!", "Tanggal wajib diisi!", "error");
@@ -288,7 +275,6 @@
                 if (!keperluan) return Swal.fire("Oops!", "Keperluan wajib dipilih!", "error");
                 if (!foto) return Swal.fire("Oops!", "Upload bukti foto wajib!", "error");
 
-                // validasi material: minimal 1 baris valid & setiap baris harus lengkap
                 let anyMaterial = false;
                 let allRowsValid = true;
 
@@ -298,13 +284,11 @@
 
                     if (materialId) anyMaterial = true;
 
-                    // jika material dipilih maka jumlah wajib > 0
                     if (materialId && (!jumlahVal || parseInt(jumlahVal) <= 0)) {
                         allRowsValid = false;
                         return false;
                     }
 
-                    // kalau jumlah diisi tapi material kosong (invalid)
                     if (!materialId && jumlahVal) {
                         allRowsValid = false;
                         return false;

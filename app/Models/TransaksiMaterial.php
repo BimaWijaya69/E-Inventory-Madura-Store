@@ -26,7 +26,7 @@ class TransaksiMaterial extends Model
         'delet_at'
     ];
 
-    public function dibuat_oleh(): BelongsTo
+    public function pembuat(): BelongsTo
     {
         return $this->belongsTo(User::class, 'dibuat_oleh');
     }

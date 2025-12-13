@@ -86,7 +86,7 @@
                                 <div class="col-12">
                                     <div class="d-flex justify-content-between align-items-center mb-3">
                                         <h6 class="mb-0">Material yang Diterima</h6>
-                                        <button type="button" class="btn btn-success btn-sm" id="btn-add-material">
+                                        <button type="button" class="btn btn-primary btn-sm" id="btn-add-material">
                                             <i class="bi bi-plus-circle"></i> Tambah Material
                                         </button>
                                     </div>
@@ -214,7 +214,6 @@
                 $('.btn-remove-row').prop('disabled', rowCount === 1);
             }
 
-            // Tambah baris material
             $('#btn-add-material').click(function() {
                 let newRow = `
                     <tr class="material-row">
@@ -255,13 +254,11 @@
                 updateRemoveButtons();
             });
 
-            // Hapus baris material
             $(document).on('click', '.btn-remove-row', function() {
                 $(this).closest('.material-row').remove();
                 updateRemoveButtons();
             });
 
-            // Saat pilih material -> set satuan + max stok
             $(document).on('change', '.material-select', function() {
                 let selectedOption = $(this).find('option:selected');
                 let satuan = selectedOption.data('satuan');
@@ -284,7 +281,6 @@
                 row.find('.min-stok-warning').hide().text('');
             });
 
-            // Validasi jumlah vs stok (optional: basic)
             $(document).on('input', '.jumlah-input', function() {
                 let max = parseInt($(this).attr('max'));
                 let value = parseInt($(this).val());
@@ -299,7 +295,6 @@
                 }
             });
 
-            // Upload bukti penerimaan
             $('#upload-bukti-penerimaan').on('click', function() {
                 $('#foto-bukti-penerimaan').click();
             });
@@ -311,14 +306,11 @@
                 const text = $('.text-upload-text');
 
                 if (!file) {
-                    // Kalau user batal pilih file
                     if (preview.attr('src') && preview.attr('src') !== '') {
-                        // Masih ada foto lama -> biarkan preview
                         preview.show();
                         icon.hide();
                         text.text('Klik untuk ganti foto');
                     } else {
-                        // Tidak ada foto sama sekali
                         preview.hide();
                         icon.show();
                         text.text('Klik untuk upload foto');
@@ -337,7 +329,7 @@
                     return;
                 }
 
-                const maxSize = 5 * 1024 * 1024; // 5MB
+                const maxSize = 5 * 1024 * 1024;
                 if (file.size > maxSize) {
                     Swal.fire('Oops!', 'Ukuran maksimal 5MB!', 'error');
                     $(this).val('');
@@ -358,7 +350,6 @@
                 reader.readAsDataURL(file);
             });
 
-            // SUBMIT EDIT PENERIMAAN
             $('#form-edit-penerimaan').submit(function(e) {
                 e.preventDefault();
 
@@ -382,13 +373,11 @@
                     return false;
                 }
 
-                // Kalau belum ada foto sama sekali dan upload-area masih kelihatan -> wajib upload
                 if (uploadArea.is(':visible') && (!buktiInput || buktiInput === "")) {
                     Swal.fire('Oops!', 'Upload bukti foto wajib diisi!', 'error');
                     return false;
                 }
 
-                // Minimal satu material
                 let hasMaterial = false;
                 $('.material-select').each(function() {
                     if ($(this).val() !== "") {
@@ -401,7 +390,6 @@
                     return false;
                 }
 
-                // Semua material yang dipilih harus punya jumlah
                 let isValid = true;
                 $('.material-row').each(function() {
                     let materialVal = $(this).find('.material-select').val();

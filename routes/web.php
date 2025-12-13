@@ -26,7 +26,12 @@ Route::middleware(['auth', PreventBackHistory::class])->group(function () {
     Route::post('/materials/update/{id}', [MaterialController::class, 'update'])->name('material-update');
     Route::delete('/materials/delete/{id}', [MaterialController::class, 'destroy'])->name('material-delete');
 
-    Route::get('/manajmen-users', [UserController::class, 'index'])->name('users');
+    Route::get('/manajemen-users', [UserController::class, 'index'])->name('users');
+    Route::post('/manajemen-users', [UserController::class, 'store'])->name('users.store');
+    Route::get('/manajemen-users/{id}', [UserController::class, 'edit'])->name('users.edit');
+    Route::post('/manajemen-users/update/{id}', [UserController::class, 'update'])->name('users.update');
+    Route::delete('/manajemen-users/delete/{id}', [UserController::class, 'destroy'])->name('users.destroy');
+    Route::post('/manajemen-users/is_active/{id}', [UserController::class, 'is_active'])->name('users.is_active');
 
     Route::post('/transaksi', [TransaksiMaterialController::class, 'store'])->name('transaksi');
     Route::put('/transaksi/{id}', [TransaksiMaterialController::class, 'update'])->name('transaksi.update');
@@ -50,5 +55,7 @@ Route::middleware(['auth', PreventBackHistory::class])->group(function () {
     Route::get('/export-transaksi', [TransaksiMaterialController::class, 'export'])
         ->name('export.transaksi');
 
+    Route::get('/export-transaksi/{jenis}', [TransaksiMaterialController::class, 'export']);
+    Route::get('/transaksi/print/{id}', [TransaksiMaterialController::class, 'print'])->name('transaksi.print');
     Route::get('/logout', [AuthController::class, 'logout'])->name('logout');
 });

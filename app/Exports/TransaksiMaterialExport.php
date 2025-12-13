@@ -22,16 +22,28 @@ class TransaksiMaterialExport implements FromArray, WithHeadings
 
     public function headings(): array
     {
-        return [
-            'Kode Transaksi',
-            'Tanggal',
-            'Jenis',
-            'Nama Pihak Transaksi',
-            'Keperluan',
-            'Nomor Pelanggan',
-            'Nama Material',
-            'Jumlah'
-        ];
+        if ($this->jenis === '1') {
+            return [
+                'Kode Transaksi',
+                'Tanggal',
+                'Jenis',
+                'Nama Pihak Transaksi',
+                'Keperluan',
+                'Nomor Pelanggan',
+                'Nama Material',
+                'Jumlah'
+            ];
+        } else {
+            return [
+                'Kode Transaksi',
+                'Tanggal',
+                'Jenis',
+                'Nama Pihak Transaksi',
+                'Keperluan',
+                'Nama Material',
+                'Jumlah'
+            ];
+        }
     }
 
     public function array(): array
@@ -39,7 +51,7 @@ class TransaksiMaterialExport implements FromArray, WithHeadings
         $query = TransaksiMaterial::with(['detail_transaksi', 'verifikasi_transaksi'])
             ->where('delet_at', '0');
 
-        if ((int) $this->data->role !== '1') {
+        if ((int) $this->data->role !== 1) {
             $roleLogin = (int) $this->data->role;
 
             $query->whereHas('dibuat_oleh', function ($q) use ($roleLogin) {
@@ -63,16 +75,28 @@ class TransaksiMaterialExport implements FromArray, WithHeadings
         foreach ($transaksi as $t) {
             foreach ($t->detail_transaksi as $index => $d) {
 
-                $data[] = [
-                    $index == 0 ? $t->kode_transaksi : '',
-                    $index == 0 ? $t->tanggal : '',
-                    $index == 0 ? ($t->jenis == '0' ? 'Penerimaan' : 'Pengeluaran') : '',
-                    $index == 0 ? $t->nama_pihak_transaksi : '',
-                    $index == 0 ? $t->keperluan : '',
-                    $index == 0 ? $t->nomor_pelanggan : '',
-                    $d->material->nama_material ?? '-',
-                    $d->jumlah
-                ];
+                if ($this->jenis === '1') {
+                    $data[] = [
+                        $index == 0 ? $t->kode_transaksi : '',
+                        $index == 0 ? $t->tanggal : '',
+                        $index == 0 ? ($t->jenis == '0' ? 'Penerimaan' : 'Pengeluaran') : '',
+                        $index == 0 ? $t->nama_pihak_transaksi : '',
+                        $index == 0 ? $t->keperluan : '',
+                        $index == 0 ? $t->nomor_pelanggan :  '',
+                        $d->material->nama_material ?? '-',
+                        $d->jumlah
+                    ];
+                } else {
+                    $data[] = [
+                        $index == 0 ? $t->kode_transaksi : '',
+                        $index == 0 ? $t->tanggal : '',
+                        $index == 0 ? ($t->jenis == '0' ? 'Penerimaan' : 'Pengeluaran') : '',
+                        $index == 0 ? $t->nama_pihak_transaksi : '',
+                        $index == 0 ? $t->keperluan : '',
+                        $d->material->nama_material ?? '-',
+                        $d->jumlah
+                    ];
+                }
             }
         }
 

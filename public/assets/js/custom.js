@@ -5,9 +5,9 @@ $(document).ready(function () {
         const id = $(this).data("id");
 
         Swal.fire({
-            title: "Material Dikembalikan",
+            title: "Transaksi Dikembalikan",
             input: "textarea",
-            inputLabel: "Alasan Material Dikembalikan",
+            inputLabel: "Alasan Transaksi Material Dikembalikan",
             showCancelButton: true,
             cancelButtonText: "Batal",
             confirmButtonText: "Kirim",
@@ -72,7 +72,7 @@ $(document).ready(function () {
 
         Swal.fire({
             title: "Yakin?",
-            text: "Material disetujui!",
+            text: "Transaksi material disetujui",
             icon: "warning",
             showCancelButton: true,
             reverseButtons: true,
@@ -137,5 +137,58 @@ $(document).ready(function () {
                 );
             },
         });
+    });
+    $(".urutkan").on("change", function (e) {
+        const selected = $(this).val();
+        const url = new URL(window.location.href);
+        if (selected) {
+            url.searchParams.set("sort", selected);
+        } else {
+            url.searchParams.delete("sort");
+        }
+        Swal.fire({
+            title: "Memuat data...",
+            text: "Mohon tunggu sebentar",
+            allowOutsideClick: false,
+            allowEscapeKey: false,
+            showConfirmButton: false,
+            didOpen: () => {
+                Swal.showLoading();
+            },
+        });
+        window.location.href = url.toString();
+    });
+
+    $(".exportExcel").on("click", function (e) {
+        e.preventDefault();
+
+        $(".export").addClass("d-none");
+        $(".btnText").addClass("d-none");
+        $(".btnLoading").removeClass("d-none");
+        $(".exportExcel").attr("disabled", true);
+
+        let sort = $(".urutkan").val();
+        let jenis = $(".jenis").val();
+
+        let status =
+            sort === "menunggu"
+                ? 0
+                : sort === "disetujui"
+                ? 1
+                : sort === "dikembalikan"
+                ? 2
+                : "";
+        let queryParams = $.param({
+            status: status,
+        });
+
+        window.location.href = `/export-transaksi/${jenis}?${queryParams}`;
+
+        setTimeout(function () {
+            $(".export").removeClass("d-none");
+            $(".btnText").removeClass("d-none");
+            $(".btnLoading").addClass("d-none");
+            $(".exportExcel").attr("disabled", false);
+        }, 3000);
     });
 });

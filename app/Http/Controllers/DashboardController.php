@@ -18,13 +18,13 @@ class DashboardController extends Controller
             'list' => ['Dashboard', '']
         ];
 
-        $transaksiQuery = TransaksiMaterial::with(['dibuat_oleh', 'detail_transaksi', 'verifikasi_transaksi'])
+        $transaksiQuery = TransaksiMaterial::with(['pembuat', 'detail_transaksi', 'verifikasi_transaksi'])
             ->where('delet_at', '0');
 
         if ((int) $data->role !== 1) {
             $roleLogin = (int) $data->role;
 
-            $transaksiQuery->whereHas('dibuat_oleh', function ($q) use ($roleLogin) {
+            $transaksiQuery->whereHas('pembuat', function ($q) use ($roleLogin) {
                 $q->where('role', $roleLogin);
             });
         }
@@ -45,7 +45,7 @@ class DashboardController extends Controller
                 $q->where('delet_at', '0');
 
                 if ((int) $data->role === 2) {
-                    $q->whereHas('dibuat_oleh', function ($qq) {
+                    $q->whereHas('pembuat', function ($qq) {
                         $qq->whereIn('role', [2, 3]);
                     });
                 }

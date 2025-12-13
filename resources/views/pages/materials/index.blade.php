@@ -6,12 +6,17 @@
         <div class="row">
             <div class="col-lg-12">
                 <div class="card">
-                    <div class="card-body">
-                        <h5 class="card-title">
-                            <button class="btn btn-small btn-outline-primary" data-bs-toggle="modal"
-                                data-bs-target="#exampleModal">Tambah Material</button>
-                        </h5>
+                    <div class="card-header">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <h5 class="card-title mb-0">Data Material</h5>
 
+                            <div class="d-flex gap-2">
+                                <button class="btn btn-small btn-outline-primary" data-bs-toggle="modal"
+                                    data-bs-target="#exampleModal">Tambah Material</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body">
                         <!-- Table with stripped rows -->
                         <div class="table-responsive">
                             <table class="table datatable">
@@ -51,7 +56,7 @@
 
                                                         <button type="button" class="btn btn-danger btn-sm btn-decline"
                                                             data-id="{{ $material->id }}">
-                                                            <i class="bi bi-x-circle"></i>
+                                                            <i class="bi bi-trash"></i>
                                                         </button>
                                                     </div>
                                                 </td>

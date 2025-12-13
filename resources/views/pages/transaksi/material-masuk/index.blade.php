@@ -7,12 +7,89 @@
 
             <div class="col-lg-12">
                 <div class="card">
+                    <div class="card-header">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <h5 class="card-title mb-0">Data Penerimaan Material</h5>
+                            <div class="d-flex gap-2">
+                                <a href="{{ route('material-masuks.create') }}">
+                                    <button class="btn btn-small btn-outline-primary">Tambah Penerimaan</button></a>
+                                <div class="accordion accordion-flush" id="accordionFlushExample">
+                                    <div class="accordion-item">
+                                        <h5 class="accordion-header" id="flush-headingOne" data-bs-toggle="collapse"
+                                            data-bs-target="#flush-collapseOne" aria-expanded="false"
+                                            aria-controls="flush-collapseOne">
+                                            <button class="btn btn-outline-secondary btn-small dropdown-toggle"
+                                                type="button" id="dropdownMenuButton" data-bs-toggle="dropdown"
+                                                aria-expanded="false">
+                                                <i class="bi bi-sliders"></i> Opsi
+                                            </button>
+                                        </h5>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="flush-collapseOne" class="accordion-collapse collapse" aria-labelledby="flush-headingOne"
+                        data-bs-parent="#accordionFlushExample">
+                        <div class="card-body mt-3">
+                            <div class="row g-3">
+                                <div class="col-12 col-md-6">
+                                    <div class="alert alert-info alert-blue-outline mb-3">
+                                        <div class="row align-items-center">
+                                            <div class="col text-center" style="flex: 0 0 5%;">
+                                                <i class="fas fa-info-circle fa-2x"></i>
+                                            </div>
+                                            <div class="col">
+                                                <small class="mb-0 text-navi">
+                                                    Untuk mengekspor data dengan filter tertentu, silakan atur filter atau
+                                                    urutan
+                                                    terlebih
+                                                    dahulu.
+                                                    Jika ingin mengekspor semua data, langsung klik tombol export tanpa
+                                                    perlu
+                                                    memfilter.
+                                                </small>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-12 col-md-6">
+                                    <div class="card p-2 shadow-sm">
+                                        <form action="" class="keriteria">
+                                            <div class="mb-3">
+                                                <select class="form-select urutkan" name="sort">
+                                                    <option value="">--- Pilih kriteria urutan ---</option>
+                                                    <option value="menunggu" {{ $sort == 'menunggu' ? 'selected' : '' }}>
+                                                        Menunggu
+                                                    </option>
+                                                    <option value="disetujui" {{ $sort == 'disetujui' ? 'selected' : '' }}>
+                                                        Disetujui
+                                                    </option>
+                                                    <option value="dikembalikan"
+                                                        {{ $sort == 'dikembalikan' ? 'selected' : '' }}>
+                                                        Dikembalikan
+                                                    </option>
+                                                </select>
+                                            </div>
+                                        </form>
+                                        <input type="hidden" class="jenis" value="0">
+                                        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                                            <button id="" class="btn btn-success btn-export exportExcel"
+                                                id="export-excel">
+                                                <i class="bi bi-file-earmark-excel me-2 export"></i> <span
+                                                    class="btnText">Export
+                                                    Exel</span>
+                                                <span id=""
+                                                    class="spinner-border spinner-border-sm d-none btnLoading"
+                                                    role="status" aria-hidden="true"></span>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                     <div class="card-body">
-                        <h5 class="card-title ">
-                            <a href="{{ route('material-masuks.create') }}">
-                                <button class="btn btn-small btn-outline-primary">Tambah Penerimaan Material</button></a>
-                        </h5>
-
                         <!-- Table with stripped rows -->
                         <div class="table-responsive">
                             <table class="table datatable">
@@ -54,7 +131,7 @@
                                                             class="badge {{ $map[$status]['class'] ?? 'text-bg-secondary' }}">
                                                             {{ $map[$status]['text'] ?? 'Unknown' }}
                                                         </span>
-                                                        @if ($t->verifikasi_transaksi?->status == 2)
+                                                        @if ($t->verifikasi_transaksi?->status == 2 && $data->role != 1)
                                                             <span class="badge text-bg-secondary btn-ajuan"
                                                                 data-id="{{ $t->id }}"
                                                                 style="cursor: pointer;">Ajukan Kembali</span>
@@ -83,12 +160,18 @@
                                                             class="btn btn-secondary btn-sm">
                                                             <i class="bi bi-info-circle"></i>
                                                         </a>
-                                                        @if (
-                                                            ($t->verifikasi_transaksi->status == 0 && $data->role == 1) ||
-                                                                ($t->verifikasi_transaksi->status == 2 && $data->role != 1))
-                                                            <a href="{{ route('material-masuks.edit', ['id' => $t->id]) }}"
-                                                                class="btn btn-info btn-sm btn-edit-material">
-                                                                <i class="bi bi-pencil"></i>
+                                                        @if ($t->verifikasi_transaksi->status != 1)
+                                                            @if ($t->verifikasi_transaksi->status == 0 || ($t->verifikasi_transaksi->status == 2 && $data->role != 1))
+                                                                <a href="{{ route('material-masuks.edit', ['id' => $t->id]) }}"
+                                                                    class="btn btn-info btn-sm btn-edit-material">
+                                                                    <i class="bi bi-pencil"></i>
+                                                                </a>
+                                                            @endif
+                                                        @else
+                                                            <a href="{{ route('transaksi.print', ['id' => $t->id]) }}"
+                                                                class="btn btn-primary btn-sm btn-edit-material"
+                                                                target="_blank">
+                                                                <i class="bi bi-printer"></i>
                                                             </a>
                                                         @endif
                                                         <button type="button" class="btn btn-danger btn-sm btn-hps"
@@ -160,7 +243,6 @@
                                 });
                             }
                         });
-
                     }
                 });
             });

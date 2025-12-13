@@ -22,7 +22,7 @@ class VerifikasiTraksaksi extends Model
         return $this->belongsTo(TransaksiMaterial::class, 'transaksi_id');
     }
 
-    public function diverifikasi_oleh(): BelongsTo
+    public function penverifikasi(): BelongsTo
     {
         return $this->belongsTo(User::class, 'diverifikasi_oleh');
     }
